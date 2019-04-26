@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProgressBar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:paddingStart="@dimen/material_padding_large"
+        android:paddingEnd="@dimen/material_padding_large"
+        android:paddingTop="@dimen/material_padding_medium" android:paddingBottom="@dimen/material_padding_medium"
+        android:layout_width="match_parent"
+        tools:progress="35"
+        style="@style/AppTheme.ProgressBar"
+        android:layout_height="@dimen/item_progress_height">
+</ProgressBar>

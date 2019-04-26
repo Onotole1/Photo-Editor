@@ -1,0 +1,22 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@android:id/background">
+        <shape>
+            <stroke android:color="@android:color/black" android:width="@dimen/material_corner"/>
+        </shape>
+    </item>
+
+    <item android:id="@android:id/progress"
+          android:top="@dimen/progress_drawable_border"
+          android:bottom="@dimen/progress_drawable_border"
+          android:right="@dimen/progress_drawable_border"
+          android:left="@dimen/progress_drawable_border">
+        <clip>
+            <scale android:scaleWidth="100%">
+                <shape>
+                    <solid android:color="@color/colorAccent"/>
+                </shape>
+            </scale>
+        </clip>
+    </item>
+</layer-list>
