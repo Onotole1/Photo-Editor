@@ -1,7 +1,8 @@
-package com.example.photoeditor
+package com.example.photoeditor.feature.main.presentation.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.photoeditor.R
 
 class MainActivity : AppCompatActivity() {
 
