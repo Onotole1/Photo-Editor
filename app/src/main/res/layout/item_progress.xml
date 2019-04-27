@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <variable
+            name="backgroundColor"
+            type="int" />
 
         <variable
             name="progress"
@@ -14,10 +19,13 @@
         style="@style/AppTheme.ProgressBar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_progress_height"
+        android:layout_marginStart="@dimen/material_padding_medium"
+        android:layout_marginEnd="@dimen/material_padding_medium"
         android:paddingStart="@dimen/material_padding_large"
         android:paddingTop="@dimen/material_padding_medium"
         android:paddingEnd="@dimen/material_padding_large"
         android:paddingBottom="@dimen/material_padding_medium"
         android:progress="@{progress}"
+        app:backgroundColorResource="@{backgroundColor}"
         tools:progress="35" />
 </layout>
