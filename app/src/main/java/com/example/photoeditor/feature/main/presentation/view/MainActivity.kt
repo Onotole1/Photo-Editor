@@ -1,38 +1,26 @@
 package com.example.photoeditor.feature.main.presentation.view
 
-import android.os.Bundle
-import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.RecyclerView
+import com.example.photoeditor.BR
 import com.example.photoeditor.R
 import com.example.photoeditor.databinding.ActivityMainBinding
 import com.example.photoeditor.feature.main.presentation.viewmodel.MainViewModel
+import com.example.photoeditor.shared.presentation.view.activity.BaseEventsActivity
 import com.example.photoeditor.shared.presentation.view.dialog.AlertDialogFragment
-import com.example.photoeditor.shared.presentation.viewmodel.EventsDispatcher
-import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
-class MainActivity : DaggerAppCompatActivity(), MainViewModel.EventsListener,
+class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, MainViewModel.EventsListener>(),
+    MainViewModel.EventsListener,
     AlertDialogFragment.OnListItemClickListener {
 
-    @Inject
-    lateinit var binderAdapter: RecyclerView.Adapter<*>
+    override val eventsListener: MainViewModel.EventsListener = this
+
+    override val viewModelVariableId: Int = BR.viewModel
 
     @Inject
-    lateinit var tableDecoration: RecyclerView.ItemDecoration
+    override lateinit var viewModel: MainViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main).apply {
-            activityMainRecyclerView.apply {
-                adapter = binderAdapter
-                addItemDecoration(tableDecoration)
-            }
-            viewModel = MainViewModel(EventsDispatcher<MainViewModel.EventsListener>().also {
-                it.bind(this@MainActivity, this@MainActivity)
-            })
-        }
-    }
+    @Inject
+    override lateinit var binding: ActivityMainBinding
 
     override fun showImagePickerDialog() {
         AlertDialogFragment.Arguments(PICKER_IMAGE_DIALOG)
