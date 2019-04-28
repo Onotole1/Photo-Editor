@@ -1,24 +1,32 @@
 package com.example.photoeditor.feature.main.presentation.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.example.photoeditor.R
 import com.example.photoeditor.databinding.ActivityMainBinding
-import com.example.photoeditor.feature.main.presentation.view.adapter.TableDecoration
 import com.example.photoeditor.feature.main.presentation.viewmodel.MainViewModel
 import com.example.photoeditor.shared.presentation.view.dialog.AlertDialogFragment
 import com.example.photoeditor.shared.presentation.viewmodel.EventsDispatcher
-import com.example.photoeditor.utils.databinding.adapter.BinderAdapter
+import dagger.android.support.DaggerAppCompatActivity
+import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), MainViewModel.EventsListener, AlertDialogFragment.OnListItemClickListener {
+class MainActivity : DaggerAppCompatActivity(), MainViewModel.EventsListener,
+    AlertDialogFragment.OnListItemClickListener {
+
+    @Inject
+    lateinit var binderAdapter: RecyclerView.Adapter<*>
+
+    @Inject
+    lateinit var tableDecoration: RecyclerView.ItemDecoration
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main).apply {
             activityMainRecyclerView.apply {
-                adapter = BinderAdapter(this@MainActivity)
-                addItemDecoration(TableDecoration(this@MainActivity))
+                adapter = binderAdapter
+                addItemDecoration(tableDecoration)
             }
             viewModel = MainViewModel(EventsDispatcher<MainViewModel.EventsListener>().also {
                 it.bind(this@MainActivity, this@MainActivity)

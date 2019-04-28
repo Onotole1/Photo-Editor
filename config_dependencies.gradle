@@ -4,6 +4,8 @@ ext {
     androidx_recyclerview_version = "1.0.0"
     androidx_cardview_version = "1.0.0"
 
+    dagger_version = "2.22.1"
+
     rxjava_version = "2.2.8"
     rxandroid_version = "2.1.1"
 }
