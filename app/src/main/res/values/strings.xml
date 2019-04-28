@@ -5,4 +5,10 @@
     <string name="item_controller_invert_colors_label">Invert colors</string>
     <string name="item_controller_mirror_image_label">Mirror image</string>
     <string name="item_controller_select_image_label">Select image</string>
+
+    <string-array name="picker_dialog">
+        <item>Camera</item>
+        <item>Gallery</item>
+        <item>Upload image online</item>
+    </string-array>
 </resources>
