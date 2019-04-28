@@ -9,6 +9,7 @@ import android.os.Parcelable
 import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.example.photoeditor.shared.presentation.view.fragment.getArgs
 import com.example.photoeditor.shared.presentation.view.fragment.putArgs
@@ -46,6 +47,10 @@ class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListener {
             args.singleChoiceItemsRes?.also {
                 setItems(it, this@AlertDialogFragment)
             }
+
+            args.messageRes?.also {
+                setMessage(it)
+            }
         }.create()
     }
 
@@ -70,13 +75,16 @@ class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListener {
         var positiveButton: Int? = null
         var negativeButton: Int? = null
         var singleChoiceItemsRes: Int? = null
+        var messageRes: Int? = null
 
         constructor(parcel: Parcel) : this(parcel.readString()!!) {
             positiveButton = parcel.readValue(Int::class.java.classLoader) as? Int
             negativeButton = parcel.readValue(Int::class.java.classLoader) as? Int
             singleChoiceItemsRes = parcel.readValue(Int::class.java.classLoader) as? Int
+            messageRes = parcel.readValue(Int::class.java.classLoader) as? Int
         }
 
+        fun message(@StringRes messageRes: Int) = apply { this.messageRes = messageRes }
         fun positiveButton(@StringRes positiveButton: Int) = apply { this.positiveButton = positiveButton }
         fun negativeButton(@StringRes negativeButton: Int) = apply { this.negativeButton = negativeButton }
         fun singleChoiceItemsRes(@ArrayRes singleChoiceItemsRes: Int) =
@@ -91,6 +99,7 @@ class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListener {
             parcel.writeValue(positiveButton)
             parcel.writeValue(negativeButton)
             parcel.writeValue(singleChoiceItemsRes)
+            parcel.writeValue(messageRes)
         }
 
         override fun describeContents(): Int {
@@ -107,4 +116,11 @@ class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListener {
             }
         }
     }
+}
+
+fun AppCompatActivity.showAlert(tag: String, block: AlertDialogFragment.Arguments.() -> Unit) {
+    AlertDialogFragment.Arguments(tag)
+        .also(block)
+        .build()
+        .show(supportFragmentManager, tag)
 }

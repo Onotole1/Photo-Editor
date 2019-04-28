@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Photo Editor</string>
+
+    <string name="activity_main_camera_permission_explanation">The application needs access to the camera to send pictures</string>
+    <string name="activity_main_gallery_permission_explanation">The application needs access to the file system to send existing images.</string>
     
     <string name="item_controller_rotate_button_label">Rotate</string>
     <string name="item_controller_invert_colors_label">Invert colors</string>
