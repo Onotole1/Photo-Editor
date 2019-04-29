@@ -11,12 +11,12 @@ class ItemResultBinding(
     private val itemId: Long,
     @ColorRes val backgroundColor: Int,
     private val onImageClick: () -> Unit,
-    var image: Bitmap? = null
+    private val image: Bitmap? = null
 ) : BindingClass() {
     override val layoutId: Int = R.layout.item_result
 
     override fun areContentsTheSame(other: Any?): Boolean {
-        return image == (other as? ItemResultBinding)?.image
+        return image?.sameAs((other as? ItemResultBinding)?.image) == true
     }
 
     override fun areItemsTheSame(other: Any?): Boolean {

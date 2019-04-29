@@ -3,11 +3,11 @@ package com.example.photoeditor.feature.main.presentation.view
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import com.example.photoeditor.BR
 import com.example.photoeditor.R
 import com.example.photoeditor.databinding.ActivityMainBinding
@@ -36,7 +36,7 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
     override lateinit var binding: ActivityMainBinding
 
     private val mPhotoPicUri by lazy(LazyThreadSafetyMode.NONE) {
-        createPhotoUri()
+        FileProvider.getUriForFile(this, packageName, createPhotoFile())
     }
 
     override fun showImagePickerDialog() {
@@ -92,12 +92,10 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
         }
     }
 
-    private fun createPhotoUri() = Uri.fromFile(
-        File(
+    private fun createPhotoFile() = File(
             getExternalFilesDir(Environment.DIRECTORY_PICTURES),
             DEFAULT_FILE_NAME
         )
-    )
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -129,7 +127,7 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == IMAGE_PICKER_REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK) {
-            val uri = data?.data ?: mPhotoPicUri
+            viewModel.setImage(data?.data ?: mPhotoPicUri)
         }
     }
 

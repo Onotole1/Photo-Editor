@@ -6,18 +6,18 @@ import com.example.photoeditor.BR
 import com.example.photoeditor.R
 import com.example.photoeditor.utils.databinding.adapter.BindingClass
 
-class ItemControllerBinding(
+data class ItemControllerBinding(
     private val itemId: Long,
     private val onSelectImageClick: () -> Unit,
     private val onRotateClick: () -> Unit,
     private val onInvertColorsClick: () -> Unit,
     private val onMirrorImageClick: () -> Unit,
-    var image: Bitmap? = null
+    private val image: Bitmap? = null
 ) : BindingClass() {
     override val layoutId: Int = R.layout.item_controller
 
     override fun areContentsTheSame(other: Any?): Boolean {
-        return image == (other as? ItemControllerBinding)?.image
+        return image?.sameAs((other as? ItemControllerBinding)?.image) == true
     }
 
     override fun areItemsTheSame(other: Any?): Boolean {
