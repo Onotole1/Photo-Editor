@@ -1,10 +1,9 @@
 package com.example.photoeditor.utils
 
 import android.content.ContentResolver
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.*
 import android.net.Uri
-import java.lang.NullPointerException
+
 
 fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
     // Raw height and width of image
@@ -50,4 +49,39 @@ fun decodeSampledBitmapFromUri(
             BitmapFactory.decodeStream(it, null, this)
         } ?: throw NullPointerException("Bitmap read error")
     }
+}
+
+fun Bitmap.rotate(degree: Float) = Matrix().apply {
+    postRotate(degree)
+}.let {
+    Bitmap.createBitmap(this, 0, 0, width, height, it, true)
+}
+
+fun Bitmap.toGrayScale(): Bitmap {
+
+    val colorMatrix = ColorMatrix().apply {
+        setSaturation(0f)
+    }
+
+    val paint = Paint().apply {
+        colorFilter = ColorMatrixColorFilter(colorMatrix)
+    }
+
+    return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).also {
+        Canvas(it).drawBitmap(this, 0F, 0F, paint)
+    }
+}
+
+enum class FlipDirection {
+    HORIZONTAL,
+    VERTICAL
+}
+
+fun Bitmap.flip(direction: FlipDirection) = Matrix().apply {
+    when (direction) {
+        FlipDirection.HORIZONTAL -> preScale(-1.0f, 1.0f)
+        FlipDirection.VERTICAL -> preScale(1.0f, -1.0f)
+    }
+}.let {
+    Bitmap.createBitmap(this, 0, 0, width, height, it, true)
 }
