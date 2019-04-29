@@ -16,6 +16,8 @@
         android:id="@+id/activity_main_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/material_padding_medium"
         app:bindingList="@{viewModel.bindingList}"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:context=".feature.main.presentation.view.MainActivity"

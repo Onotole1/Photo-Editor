@@ -11,7 +11,7 @@ abstract class BindingClass {
 
     abstract fun areContentsTheSame(other: Any?): Boolean
 
-    abstract fun areItemsTheSame(other: Any?): Boolean
+    open fun areItemsTheSame(other: Any?): Boolean = this == other
 
     abstract fun bind(viewDataBinding: ViewDataBinding)
 

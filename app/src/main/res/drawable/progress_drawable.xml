@@ -14,7 +14,7 @@
         <clip>
             <scale android:scaleWidth="100%">
                 <shape>
-                    <solid android:color="@color/colorAccent"/>
+                    <solid android:color="@color/color_accent"/>
                 </shape>
             </scale>
         </clip>

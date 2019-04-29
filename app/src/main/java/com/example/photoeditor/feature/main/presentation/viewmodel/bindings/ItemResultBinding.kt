@@ -18,10 +18,6 @@ class ItemResultBinding(
         return image?.sameAs((other as? ItemResultBinding)?.image) == true
     }
 
-    override fun areItemsTheSame(other: Any?): Boolean {
-        return itemId == (other as? ItemResultBinding)?.itemId
-    }
-
     override fun bind(viewDataBinding: ViewDataBinding) {
         viewDataBinding.apply {
             setVariable(BR.image, image)

@@ -15,10 +15,6 @@ class ItemProgressBinding(
         return progress == (other as? ItemProgressBinding)?.progress
     }
 
-    override fun areItemsTheSame(other: Any?): Boolean {
-        return itemId == (other as? ItemProgressBinding)?.itemId
-    }
-
     override fun bind(viewDataBinding: ViewDataBinding) {
         viewDataBinding.setVariable(BR.progress, progress)
     }
