@@ -21,7 +21,7 @@ class GetBitmapFromUri @Inject constructor(
 ) {
     override fun buildUseCaseObservable(params: Uri): Observable<Bitmap> {
         return Observable.fromCallable {
-            val reqSize = Resources.getSystem().displayMetrics.heightPixels / 2
+            val reqSize = Resources.getSystem().displayMetrics.widthPixels / 2
 
             repository.getBitmapFromUri(params, reqSize, reqSize)
         }
