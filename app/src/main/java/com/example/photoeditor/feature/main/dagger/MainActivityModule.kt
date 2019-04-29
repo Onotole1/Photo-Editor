@@ -9,6 +9,7 @@ import com.example.photoeditor.databinding.ActivityMainBinding
 import com.example.photoeditor.feature.main.presentation.view.MainActivity
 import com.example.photoeditor.feature.main.presentation.view.adapter.TableDecoration
 import com.example.photoeditor.feature.main.presentation.viewmodel.MainViewModel
+import com.example.photoeditor.shared.domain.model.State
 import com.example.photoeditor.shared.domain.usecase.UseCase
 import com.example.photoeditor.shared.presentation.viewmodel.EventsDispatcher
 import com.example.photoeditor.shared.presentation.viewmodel.ViewModelFactory
@@ -23,10 +24,15 @@ class MainActivityModule {
     @Provides
     fun provideViewModel(
         context: MainActivity,
-        @Named("get_bitmap_from_uri")
-        getBitmapFromUri: UseCase<Bitmap, Uri>
+        getBitmapFromUri: UseCase<Bitmap, Uri>,
+        @Named("rotate_bitmap")
+        rotateBitmap: UseCase<State<Bitmap>, Bitmap>,
+        @Named("invert_bitmap")
+        invertBitmap: UseCase<State<Bitmap>, Bitmap>,
+        @Named("mirror_bitmap")
+        mirrorBitmap: UseCase<State<Bitmap>, Bitmap>
     ): MainViewModel = ViewModelFactory {
-        MainViewModel(EventsDispatcher(), getBitmapFromUri)
+        MainViewModel(EventsDispatcher(), getBitmapFromUri, rotateBitmap, mirrorBitmap, invertBitmap)
     }.let {
         ViewModelProvider(context, it)[MainViewModel::class.java]
     }

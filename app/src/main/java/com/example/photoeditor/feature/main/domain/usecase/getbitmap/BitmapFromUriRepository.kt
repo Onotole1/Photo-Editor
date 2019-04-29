@@ -1,4 +1,4 @@
-package com.example.photoeditor.feature.main.domain.usecase
+package com.example.photoeditor.feature.main.domain.usecase.getbitmap
 
 import android.graphics.Bitmap
 import android.net.Uri

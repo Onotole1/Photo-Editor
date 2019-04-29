@@ -4,14 +4,12 @@ import android.graphics.Bitmap
 import androidx.databinding.ViewDataBinding
 import com.example.photoeditor.BR
 import com.example.photoeditor.R
+import com.example.photoeditor.feature.main.presentation.viewmodel.MainViewModel
 import com.example.photoeditor.utils.databinding.adapter.BindingClass
 
-data class ItemControllerBinding(
-    private val itemId: Long,
-    private val onSelectImageClick: () -> Unit,
-    private val onRotateClick: () -> Unit,
-    private val onInvertColorsClick: () -> Unit,
-    private val onMirrorImageClick: () -> Unit,
+class ItemControllerBinding(
+    override val itemId: Long,
+    private val viewModel: MainViewModel,
     private val image: Bitmap? = null
 ) : BindingClass() {
     override val layoutId: Int = R.layout.item_controller
@@ -27,10 +25,7 @@ data class ItemControllerBinding(
     override fun bind(viewDataBinding: ViewDataBinding) {
         viewDataBinding.apply {
             setVariable(BR.image, image)
-            setVariable(BR.onSelectImageClick, onSelectImageClick)
-            setVariable(BR.onRotateClick, onRotateClick)
-            setVariable(BR.onInvertColorsClick, onInvertColorsClick)
-            setVariable(BR.onMirrorImageClick, onMirrorImageClick)
+            setVariable(BR.viewModel, viewModel)
         }
     }
 }

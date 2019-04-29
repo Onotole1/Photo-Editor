@@ -14,10 +14,6 @@
             type="android.graphics.Bitmap" />
 
         <variable
-            name="backgroundColor"
-            type="int" />
-
-        <variable
             name="onImageClick"
             type="Function0&lt;Unit>" />
     </data>
@@ -28,14 +24,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/material_padding_medium"
         android:layout_marginEnd="@dimen/material_padding_medium"
-        android:onClick="@{() -> onImageClick.invoke()}"
-        app:backgroundColorResource="@{backgroundColor}">
+        android:onClick="@{() -> onImageClick.invoke()}">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_result_height"
             android:paddingTop="@dimen/material_padding_small"
             android:paddingBottom="@dimen/material_padding_small"
+            app:imageBitmap="@{image}"
             tools:src="@drawable/image_placeholder" />
     </androidx.cardview.widget.CardView>
 </layout>

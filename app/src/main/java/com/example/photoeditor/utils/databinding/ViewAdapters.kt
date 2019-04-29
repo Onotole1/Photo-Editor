@@ -15,12 +15,4 @@ object ViewAdapters {
             View.GONE
         }
     }
-
-    @JvmStatic
-    @BindingAdapter("backgroundColorResource")
-    fun View.setBackgroundColorResource(backgroundColorResource: Int) {
-        if (backgroundColorResource != 0) {
-            setBackgroundColor(ContextCompat.getColor(context, backgroundColorResource))
-        }
-    }
 }

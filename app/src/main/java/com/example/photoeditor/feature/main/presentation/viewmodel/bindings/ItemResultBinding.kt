@@ -5,12 +5,12 @@ import androidx.annotation.ColorRes
 import androidx.databinding.ViewDataBinding
 import com.example.photoeditor.BR
 import com.example.photoeditor.R
+import com.example.photoeditor.feature.main.presentation.viewmodel.MainViewModel
 import com.example.photoeditor.utils.databinding.adapter.BindingClass
 
 class ItemResultBinding(
-    private val itemId: Long,
-    @ColorRes val backgroundColor: Int,
-    private val onImageClick: () -> Unit,
+    override val itemId: Long,
+    private val viewModel: MainViewModel,
     private val image: Bitmap? = null
 ) : BindingClass() {
     override val layoutId: Int = R.layout.item_result
@@ -26,8 +26,7 @@ class ItemResultBinding(
     override fun bind(viewDataBinding: ViewDataBinding) {
         viewDataBinding.apply {
             setVariable(BR.image, image)
-            setVariable(BR.onImageClick, onImageClick)
-            setVariable(BR.backgroundColor, backgroundColor)
+            setVariable(BR.viewModel, viewModel)
         }
     }
 }
