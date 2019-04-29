@@ -48,9 +48,9 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
 
     override fun onListItemClick(dialogTag: String, dialog: AlertDialogFragment, position: Int) {
         if (dialogTag == PICKER_IMAGE_DIALOG) {
-            when (Buttons.values()[position]) {
+            when (PickerButtons.values()[position]) {
 
-                Buttons.CAMERA_BUTTON -> {
+                PickerButtons.CAMERA_BUTTON -> {
                     if (isPermissionGranted(Manifest.permission.CAMERA)) {
                         startCamera()
                     } else {
@@ -58,7 +58,7 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
                     }
                 }
 
-                Buttons.GALLERY_BUTTON -> {
+                PickerButtons.GALLERY_BUTTON -> {
                     if (isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                         startGallery()
                     } else {
@@ -69,9 +69,14 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
                     }
                 }
 
-                Buttons.NET_BUTTON -> {
+                PickerButtons.NET_BUTTON -> {
 
                 }
+            }
+        } else if (dialogTag == REPLACE_OR_REMOVE_IMAGE_DIALOG) {
+            when (ReplaceOrRemoveButtons.values()[position]) {
+                ReplaceOrRemoveButtons.REMOVE_BUTTON -> viewModel.removeImage()
+                ReplaceOrRemoveButtons.REPLACE_BUTTON -> viewModel.replaceExistingImage()
             }
         }
     }
@@ -93,9 +98,9 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
     }
 
     private fun createPhotoFile() = File(
-            getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-            DEFAULT_FILE_NAME
-        )
+        getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+        DEFAULT_FILE_NAME
+    )
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -123,6 +128,13 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
         }
     }
 
+    override fun showReplaceOrRemoveDialog() {
+        showAlert(REPLACE_OR_REMOVE_IMAGE_DIALOG) {
+            negativeButton(android.R.string.cancel)
+            singleChoiceItemsRes = R.array.replace_or_remove_dialog
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -144,14 +156,22 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
         }
     }
 
-    private enum class Buttons {
+    private enum class PickerButtons {
         CAMERA_BUTTON,
         GALLERY_BUTTON,
         NET_BUTTON,
     }
 
+    private enum class ReplaceOrRemoveButtons {
+        REMOVE_BUTTON,
+        REPLACE_BUTTON,
+    }
+
     private companion object {
         const val PICKER_IMAGE_DIALOG = "com.example.photoeditor.feature.main.presentation.view.PICKER_IMAGE_DIALOG"
+
+        const val REPLACE_OR_REMOVE_IMAGE_DIALOG =
+            "com.example.photoeditor.feature.main.presentation.view.REPLACE_OR_REMOVE_IMAGE_DIALOG"
 
         const val CAMERA_PERMISSION_REQUEST_CODE = 483
 

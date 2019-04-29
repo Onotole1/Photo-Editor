@@ -29,6 +29,8 @@ class MainViewModel(
         updateList(source, key)
     }
 
+    private var selectedItem: Long? = null
+
     val bindingList = ObservableField<List<BindingClass>>()
 
     init {
@@ -69,6 +71,23 @@ class MainViewModel(
 
     fun onMirrorImageClick(bitmap: Bitmap) {
         executeTransform(mirrorBitmap, bitmap)
+    }
+
+    fun onImageClick(itemId: Long) {
+        selectedItem = itemId
+        eventsDispatcher.dispatchEvent { showReplaceOrRemoveDialog() }
+    }
+
+    fun removeImage() {
+        selectedItem?.also {
+            items.remove(it)
+        }
+    }
+
+    fun replaceExistingImage() {
+        val selectedItem = items.getValue(selectedItem ?: return) as ItemResultBinding
+
+        items[ITEM_CONTROLLER_ID] = ItemControllerBinding(ITEM_CONTROLLER_ID, this, selectedItem.image)
     }
 
     private fun executeTransform(transform: UseCase<State<Bitmap>, Bitmap>, bitmap: Bitmap) {
@@ -128,5 +147,6 @@ class MainViewModel(
 
     interface EventsListener {
         fun showImagePickerDialog()
+        fun showReplaceOrRemoveDialog()
     }
 }

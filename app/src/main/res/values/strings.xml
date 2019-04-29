@@ -14,4 +14,9 @@
         <item>Gallery</item>
         <item>Upload image online</item>
     </string-array>
+
+    <string-array name="replace_or_remove_dialog">
+        <item>Remove</item>
+        <item>Use for the next transformation</item>
+    </string-array>
 </resources>
