@@ -9,6 +9,14 @@
     <string name="item_controller_mirror_image_label">Mirror image</string>
     <string name="item_controller_select_image_label">Select image</string>
 
+    <string name="download_image_dialog_hint">Enter image url</string>
+    <string name="download_image_dialog_incorrect_url">You entered an incorrect URL</string>
+
+    <string name="connection_error">Connection error</string>
+    <string name="no_disk_space_error">No disk space</string>
+
+    <string name="download_image_percentage">%d%%</string>
+
     <string-array name="picker_dialog">
         <item>Camera</item>
         <item>Gallery</item>

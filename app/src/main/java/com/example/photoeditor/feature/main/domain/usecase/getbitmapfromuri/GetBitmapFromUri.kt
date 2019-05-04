@@ -1,6 +1,5 @@
-package com.example.photoeditor.feature.main.domain.usecase.getbitmap
+package com.example.photoeditor.feature.main.domain.usecase.getbitmapfromuri
 
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.net.Uri
 import com.example.photoeditor.shared.domain.usecase.ExecutionThread
@@ -21,9 +20,7 @@ class GetBitmapFromUri @Inject constructor(
 ) {
     override fun buildUseCaseObservable(params: Uri): Observable<Bitmap> {
         return Observable.fromCallable {
-            val reqSize = Resources.getSystem().displayMetrics.widthPixels / 2
-
-            repository.getBitmapFromUri(params, reqSize, reqSize)
+            repository.getBitmapFromUri(params)
         }
     }
 

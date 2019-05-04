@@ -12,4 +12,6 @@
     <dimen name="item_result_height">160dp</dimen>
 
     <dimen name="table_border">2dp</dimen>
+
+    <dimen name="large_text_size">36sp</dimen>
 </resources>

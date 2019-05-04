@@ -21,8 +21,9 @@ class MainViewModel(
     private val getBitmapFromUri: UseCase<Bitmap, Uri>,
     private val rotateBitmap: UseCase<State<Bitmap>, Bitmap>,
     private val mirrorBitmap: UseCase<State<Bitmap>, Bitmap>,
-    private val invertBitmap: UseCase<State<Bitmap>, Bitmap>
-) : BaseViewModel(getBitmapFromUri, rotateBitmap, mirrorBitmap, invertBitmap),
+    private val invertBitmap: UseCase<State<Bitmap>, Bitmap>,
+    private val getBitmapFromUrl: UseCase<State<Bitmap>, String>
+) : BaseViewModel(getBitmapFromUri, rotateBitmap, mirrorBitmap, invertBitmap, getBitmapFromUrl),
     EventsDispatcherOwner<MainViewModel.EventsListener> {
 
     private val items = ObservableArrayMap<Long, BindingClass>().withChangedCallback { source, key ->
@@ -44,15 +45,29 @@ class MainViewModel(
     private fun bitmapSelectObserver() = object : DefaultObserver<Bitmap>() {
 
         override fun onNext(value: Bitmap) {
-            val controller = items[ITEM_CONTROLLER_ID] ?: return
-
-            items[ITEM_CONTROLLER_ID] = ItemControllerBinding(controller.itemId, this@MainViewModel, value)
+            updateControllerImage(value)
         }
 
         override fun onError(e: Throwable) {
-
+            eventsDispatcher.dispatchEvent { showError(e) }
         }
 
+    }
+
+    private fun updateControllerImage(bitmap: Bitmap) {
+        val controller = items[ITEM_CONTROLLER_ID] ?: return
+
+        items[ITEM_CONTROLLER_ID] = ItemControllerBinding(controller.itemId, this@MainViewModel, bitmap)
+    }
+
+    private fun updateControllerProgress(progress: Int?) {
+        val controller = items[ITEM_CONTROLLER_ID] as? ItemControllerBinding ?: return
+
+        items[ITEM_CONTROLLER_ID] = ItemControllerBinding(controller.itemId, this@MainViewModel, controller.image, progress)
+    }
+
+    fun downloadImageByUrl(url: String) {
+        getBitmapFromUrl.execute(bitmapDownloadObserver(), url)
     }
 
     fun onSelectImageClick() {
@@ -138,8 +153,25 @@ class MainViewModel(
 
         override fun onError(e: Throwable) {
             items.remove(itemId)
+            eventsDispatcher.dispatchEvent { showError(e) }
         }
     }
+
+    private fun bitmapDownloadObserver() = object : DefaultObserver<State<Bitmap>>() {
+        override fun onNext(value: State<Bitmap>) {
+            when (value) {
+                is State.Data -> updateControllerImage(value.data)
+                is State.Progress -> updateControllerProgress(value.progress)
+            }
+        }
+
+        override fun onError(e: Throwable) {
+            updateControllerProgress(null)
+            eventsDispatcher.dispatchEvent { showError(e) }
+        }
+    }
+
+
 
     private companion object {
         const val ITEM_CONTROLLER_ID = 435L
@@ -148,5 +180,6 @@ class MainViewModel(
     interface EventsListener {
         fun showImagePickerDialog()
         fun showReplaceOrRemoveDialog()
+        fun showError(throwable: Throwable)
     }
 }

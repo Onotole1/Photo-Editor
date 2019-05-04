@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
+        <item name="fontFamily">@font/roboto_regular_family</item>
     </style>
 
     <style name="AppTheme.Button" parent="Widget.AppCompat.Button">
@@ -23,5 +24,11 @@
         <item name="android:focusable">true</item>
         <item name="cardBackgroundColor">@android:color/transparent</item>
         <item name="cardElevation">0dp</item>
+    </style>
+
+    <style name="AppTheme.LargeWhiteText" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/roboto_medium_family</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/large_text_size</item>
     </style>
 </resources>

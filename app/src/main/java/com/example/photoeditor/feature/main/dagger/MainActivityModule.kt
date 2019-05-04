@@ -30,9 +30,10 @@ class MainActivityModule {
         @Named("invert_bitmap")
         invertBitmap: UseCase<State<Bitmap>, Bitmap>,
         @Named("mirror_bitmap")
-        mirrorBitmap: UseCase<State<Bitmap>, Bitmap>
+        mirrorBitmap: UseCase<State<Bitmap>, Bitmap>,
+        getBitmapFromUrl: UseCase<State<Bitmap>, String>
     ): MainViewModel = ViewModelFactory {
-        MainViewModel(EventsDispatcher(), getBitmapFromUri, rotateBitmap, mirrorBitmap, invertBitmap)
+        MainViewModel(EventsDispatcher(), getBitmapFromUri, rotateBitmap, mirrorBitmap, invertBitmap, getBitmapFromUrl)
     }.let {
         ViewModelProvider(context, it)[MainViewModel::class.java]
     }

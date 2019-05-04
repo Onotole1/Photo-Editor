@@ -12,7 +12,7 @@ import dagger.android.support.AndroidSupportInjectionModule
         AndroidSupportInjectionModule::class,
         ThreadExecutionModule::class,
         UseCaseModule::class,
-        RepositoryModule::class
+        DataModule::class
     ]
 )
 interface AppModule {

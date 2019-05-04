@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -9,8 +10,16 @@
         <import type="android.graphics.Bitmap" />
 
         <variable
+            name="progress"
+            type="Integer" />
+
+        <variable
             name="image"
             type="Bitmap" />
+
+        <variable
+            name="imageReady"
+            type="boolean" />
 
         <variable
             name="viewModel"
@@ -39,8 +48,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="?android:selectableItemBackground"
-            android:clickable="@{image != null}"
-            android:focusable="@{image != null}"
+            android:clickable="@{imageReady}"
+            android:focusable="@{imageReady}"
             android:onClick="@{() -> viewModel.onSelectImageClick()}"
             app:layout_constraintBottom_toBottomOf="@id/item_controller_image"
             app:layout_constraintEnd_toEndOf="@id/item_controller_image"
@@ -57,14 +66,15 @@
             app:layout_constraintEnd_toEndOf="@id/item_controller_image"
             app:layout_constraintStart_toStartOf="@id/item_controller_image"
             app:layout_constraintTop_toTopOf="@id/item_controller_image"
-            app:visibleOrGone="@{image == null}" />
+            app:visibleOrGone="@{image == null}"
+            tools:visibility="invisible" />
 
         <Button
             android:id="@+id/item_controller_rotate_button"
             style="@style/AppTheme.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:enabled="@{image != null}"
+            android:enabled="@{imageReady}"
             android:onClick="@{() -> viewModel.onRotateClick(image)}"
             android:text="@string/item_controller_rotate_button_label"
             app:layout_constraintBottom_toTopOf="@id/item_controller_invert_colors_button"
@@ -79,7 +89,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/material_padding_small"
-            android:enabled="@{image != null}"
+            android:enabled="@{imageReady}"
             android:onClick="@{() -> viewModel.onInvertColorsClick(image)}"
             android:text="@string/item_controller_invert_colors_label"
             app:layout_constraintBottom_toTopOf="@id/item_controller_mirror_image_button"
@@ -92,13 +102,27 @@
             style="@style/AppTheme.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:enabled="@{image != null}"
+            android:enabled="@{imageReady}"
             android:onClick="@{() -> viewModel.onMirrorImageClick(image)}"
             android:text="@string/item_controller_mirror_image_label"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/item_controller_invert_colors_button"
             app:layout_constraintTop_toBottomOf="@id/item_controller_invert_colors_button" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:text="@{@string/download_image_percentage(progress)}"
+            android:textAppearance="@style/AppTheme.LargeWhiteText"
+            app:layout_constraintBottom_toBottomOf="@id/item_controller_image"
+            app:layout_constraintEnd_toEndOf="@id/item_controller_image"
+            app:layout_constraintStart_toStartOf="@id/item_controller_image"
+            app:layout_constraintTop_toTopOf="@id/item_controller_image"
+            app:visibleOrGone="@{progress != null}"
+            tools:elevation="10dp"
+            tools:text="146%" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -6,16 +6,13 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.annotation.ArrayRes
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.example.photoeditor.shared.presentation.view.fragment.getArgs
 import com.example.photoeditor.shared.presentation.view.fragment.putArgs
-import java.lang.NullPointerException
 
-class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListener {
+open class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListener {
 
     private var onDialogButtonPressedListener: OnDialogButtonPressedListener? = null
     private var onListItemClickListener: OnListItemClickListener? = null
@@ -32,35 +29,45 @@ class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListener {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        args = arguments?.getArgs() ?: throw NullPointerException("Args must be set!")
+        args = getArgs()
 
         return AlertDialog.Builder(requireContext()).apply {
-
-            args.positiveButton?.also {
-                setPositiveButton(it, this@AlertDialogFragment)
-            }
-
-            args.negativeButton?.also {
-                setNegativeButton(it, this@AlertDialogFragment)
-            }
-
-            args.singleChoiceItemsRes?.also {
-                setItems(it, this@AlertDialogFragment)
-            }
-
-            args.messageRes?.also {
-                setMessage(it)
-            }
+            setupDialog(this, savedInstanceState)
         }.create()
+    }
+
+    open fun getArgs(): Arguments {
+        return arguments?.getArgs() ?: throw NullPointerException("Args must be set!")
+    }
+
+    open fun setupDialog(builder: AlertDialog.Builder, savedInstanceState: Bundle?) {
+        args.positiveButton?.also {
+            builder.setPositiveButton(it, this@AlertDialogFragment)
+        }
+
+        args.negativeButton?.also {
+            builder.setNegativeButton(it, this@AlertDialogFragment)
+        }
+
+        args.singleChoiceItemsRes?.also {
+            builder.setItems(it, this@AlertDialogFragment)
+        }
+
+        args.messageRes?.also {
+            builder.setMessage(it)
+        }
     }
 
     override fun onClick(dialog: DialogInterface, which: Int) {
         if (which < 0) {
             onDialogButtonPressedListener?.onDialogButtonPressed(args.dialogTag, this, which)
+            onDialogButtonPressed(which)
         } else {
             onListItemClickListener?.onListItemClick(args.dialogTag, this, which)
         }
     }
+
+    open fun onDialogButtonPressed(which: Int) {}
 
     interface OnDialogButtonPressedListener {
         fun onDialogButtonPressed(dialogTag: String, dialog: AlertDialogFragment, buttonId: Int)
@@ -70,7 +77,7 @@ class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListener {
         fun onListItemClick(dialogTag: String, dialog: AlertDialogFragment, position: Int)
     }
 
-    data class Arguments(val dialogTag: String) : Parcelable {
+    open class Arguments(val dialogTag: String) : Parcelable {
 
         var positiveButton: Int? = null
         var negativeButton: Int? = null
@@ -84,13 +91,7 @@ class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListener {
             messageRes = parcel.readValue(Int::class.java.classLoader) as? Int
         }
 
-        fun message(@StringRes messageRes: Int) = apply { this.messageRes = messageRes }
-        fun positiveButton(@StringRes positiveButton: Int) = apply { this.positiveButton = positiveButton }
-        fun negativeButton(@StringRes negativeButton: Int) = apply { this.negativeButton = negativeButton }
-        fun singleChoiceItemsRes(@ArrayRes singleChoiceItemsRes: Int) =
-            apply { this.singleChoiceItemsRes = singleChoiceItemsRes }
-
-        fun build() = AlertDialogFragment().apply {
+        open fun build() = AlertDialogFragment().apply {
             putArgs(this@Arguments)
         }
 

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Environment
 import android.provider.MediaStore
+import android.webkit.URLUtil
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -14,16 +15,20 @@ import com.example.photoeditor.databinding.ActivityMainBinding
 import com.example.photoeditor.feature.main.presentation.viewmodel.MainViewModel
 import com.example.photoeditor.shared.presentation.view.activity.BaseEventsActivity
 import com.example.photoeditor.shared.presentation.view.dialog.AlertDialogFragment
+import com.example.photoeditor.shared.presentation.view.dialog.EditTextAlertDialog
 import com.example.photoeditor.shared.presentation.view.dialog.showAlert
+import com.example.photoeditor.shared.presentation.view.dialog.showEditTextAlert
 import com.example.photoeditor.utils.isPermissionGranted
 import com.example.photoeditor.utils.requestPermissions
+import com.example.photoeditor.utils.toUserFriendlyError
 import com.example.photoeditor.utils.toast
 import java.io.File
 import javax.inject.Inject
 
 class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, MainViewModel.EventsListener>(),
     MainViewModel.EventsListener,
-    AlertDialogFragment.OnListItemClickListener {
+    AlertDialogFragment.OnListItemClickListener,
+    EditTextAlertDialog.EditTextDialogListener {
 
     override val eventsListener: MainViewModel.EventsListener = this
 
@@ -41,9 +46,13 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
 
     override fun showImagePickerDialog() {
         showAlert(PICKER_IMAGE_DIALOG) {
-            negativeButton(android.R.string.cancel)
-            singleChoiceItemsRes(R.array.picker_dialog)
+            negativeButton = android.R.string.cancel
+            singleChoiceItemsRes = R.array.picker_dialog
         }
+    }
+
+    override fun showError(throwable: Throwable) {
+        toast(throwable.toUserFriendlyError(this))
     }
 
     override fun onListItemClick(dialogTag: String, dialog: AlertDialogFragment, position: Int) {
@@ -70,7 +79,11 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
                 }
 
                 PickerButtons.NET_BUTTON -> {
-
+                    showEditTextAlert(DOWNLOAD_IMAGE_DIALOG) {
+                        positiveButton = android.R.string.ok
+                        negativeButton = android.R.string.cancel
+                        editTextHintRes = R.string.download_image_dialog_hint
+                    }
                 }
             }
         } else if (dialogTag == REPLACE_OR_REMOVE_IMAGE_DIALOG) {
@@ -78,6 +91,14 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
                 ReplaceOrRemoveButtons.REMOVE_BUTTON -> viewModel.removeImage()
                 ReplaceOrRemoveButtons.REPLACE_BUTTON -> viewModel.replaceExistingImage()
             }
+        }
+    }
+
+    override fun onTextSelected(text: String) {
+        if (URLUtil.isValidUrl(text)) {
+            viewModel.downloadImageByUrl(text)
+        } else {
+            toast(R.string.download_image_dialog_incorrect_url)
         }
     }
 
@@ -130,7 +151,7 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
 
     override fun showReplaceOrRemoveDialog() {
         showAlert(REPLACE_OR_REMOVE_IMAGE_DIALOG) {
-            negativeButton(android.R.string.cancel)
+            negativeButton = android.R.string.cancel
             singleChoiceItemsRes = R.array.replace_or_remove_dialog
         }
     }
@@ -169,6 +190,8 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
 
     private companion object {
         const val PICKER_IMAGE_DIALOG = "com.example.photoeditor.feature.main.presentation.view.PICKER_IMAGE_DIALOG"
+
+        const val DOWNLOAD_IMAGE_DIALOG = "com.example.photoeditor.feature.main.presentation.view.DOWNLOAD_IMAGE_DIALOG"
 
         const val REPLACE_OR_REMOVE_IMAGE_DIALOG =
             "com.example.photoeditor.feature.main.presentation.view.REPLACE_OR_REMOVE_IMAGE_DIALOG"

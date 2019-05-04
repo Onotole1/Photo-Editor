@@ -3,6 +3,8 @@ package com.example.photoeditor.utils
 import android.content.ContentResolver
 import android.graphics.*
 import android.net.Uri
+import java.io.FileInputStream
+import java.io.InputStream
 
 
 fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
@@ -31,11 +33,39 @@ fun decodeSampledBitmapFromUri(
     reqWidth: Int,
     reqHeight: Int
 ): Bitmap {
+    return decodeSampledBitmap(
+        {
+            contentResolver.openInputStream(uri)
+        },
+        reqWidth,
+        reqHeight
+    )
+}
+
+fun decodeSampledBitmapFromFile(
+    file: String,
+    reqWidth: Int,
+    reqHeight: Int
+): Bitmap {
+    return decodeSampledBitmap(
+        {
+            FileInputStream(file)
+        },
+        reqWidth,
+        reqHeight
+    )
+}
+
+private fun decodeSampledBitmap(
+    stream: () -> InputStream?,
+    reqWidth: Int,
+    reqHeight: Int
+): Bitmap {
     // First decode with inJustDecodeBounds=true to check dimensions
     return BitmapFactory.Options().run {
         inJustDecodeBounds = true
 
-        contentResolver.openInputStream(uri).use {
+        stream().use {
             BitmapFactory.decodeStream(it, null, this)
         }
 
@@ -45,13 +75,13 @@ fun decodeSampledBitmapFromUri(
         // Decode bitmap with inSampleSize set
         inJustDecodeBounds = false
 
-        contentResolver.openInputStream(uri).use {
+        stream().use {
             BitmapFactory.decodeStream(it, null, this)
         } ?: throw NullPointerException("Bitmap read error")
     }
 }
 
-fun Bitmap.rotate(degree: Float) = Matrix().apply {
+fun Bitmap.rotate(degree: Float): Bitmap = Matrix().apply {
     postRotate(degree)
 }.let {
     Bitmap.createBitmap(this, 0, 0, width, height, it, true)
@@ -77,7 +107,7 @@ enum class FlipDirection {
     VERTICAL
 }
 
-fun Bitmap.flip(direction: FlipDirection) = Matrix().apply {
+fun Bitmap.flip(direction: FlipDirection): Bitmap = Matrix().apply {
     when (direction) {
         FlipDirection.HORIZONTAL -> preScale(-1.0f, 1.0f)
         FlipDirection.VERTICAL -> preScale(1.0f, -1.0f)

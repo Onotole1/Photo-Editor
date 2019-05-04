@@ -6,7 +6,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
 
 
-abstract class UseCase<T, Params> internal constructor(
+abstract class UseCase<T, Params> (
     private val executionThread: ExecutionThread,
     private val postThreadExecutionThread: ExecutionThread
 ) {
@@ -15,7 +15,7 @@ abstract class UseCase<T, Params> internal constructor(
     abstract fun buildUseCaseObservable(params: Params): Observable<T>
 
     fun execute(observer: DisposableObserver<T>, params: Params) {
-        val observable = this.buildUseCaseObservable(params)
+        val observable = buildUseCaseObservable(params)
             .subscribeOn(executionThread.scheduler)
             .observeOn(postThreadExecutionThread.scheduler)
         addDisposable(observable.subscribeWith(observer))
