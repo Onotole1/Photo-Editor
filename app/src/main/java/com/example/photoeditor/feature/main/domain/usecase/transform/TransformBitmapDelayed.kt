@@ -1,6 +1,7 @@
-package com.example.photoeditor.feature.main.domain.usecase
+package com.example.photoeditor.feature.main.domain.usecase.transform
 
 import android.graphics.Bitmap
+import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
 import com.example.photoeditor.shared.domain.model.State
 import com.example.photoeditor.shared.domain.usecase.ExecutionThread
 import com.example.photoeditor.shared.domain.usecase.RandomGenerator
@@ -11,13 +12,14 @@ import java.util.concurrent.TimeUnit
 
 abstract class TransformBitmapDelayed(
     private val randomGenerator: RandomGenerator<Long>,
+    private val repository: TransformRepository,
     workerThreadExecutor: ExecutionThread,
     postThreadExecutor: ExecutionThread
-) : UseCase<State<Bitmap>, Bitmap>(workerThreadExecutor, postThreadExecutor) {
+) : UseCase<State<Bitmap>, BitmapWithId>(workerThreadExecutor, postThreadExecutor) {
 
     abstract fun bitmapSource(params: Bitmap): Observable<Bitmap>
 
-    override fun buildUseCaseObservable(params: Bitmap): Observable<State<Bitmap>> {
+    override fun buildUseCaseObservable(params: BitmapWithId): Observable<State<Bitmap>> {
         val random = randomGenerator.generate()
         val max = random.dec()
 
@@ -25,7 +27,10 @@ abstract class TransformBitmapDelayed(
 
         return Observable.combineLatest(
             interval,
-            bitmapSource(params),
+            bitmapSource(params.source).map {
+                repository.saveBitmapToFile(params.copy(source = it))
+                it
+            },
             BiFunction<Long, Bitmap, State<Bitmap>> { seconds: Long, bitmap: Bitmap ->
                 if (max == seconds) {
                     State.Data(bitmap)

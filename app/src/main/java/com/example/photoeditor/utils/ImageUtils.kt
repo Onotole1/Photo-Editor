@@ -3,6 +3,7 @@ package com.example.photoeditor.utils
 import android.content.ContentResolver
 import android.graphics.*
 import android.net.Uri
+import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 
@@ -44,6 +45,20 @@ fun decodeSampledBitmapFromUri(
 
 fun decodeSampledBitmapFromFile(
     file: String,
+    reqWidth: Int,
+    reqHeight: Int
+): Bitmap {
+    return decodeSampledBitmap(
+        {
+            FileInputStream(file)
+        },
+        reqWidth,
+        reqHeight
+    )
+}
+
+fun decodeSampledBitmapFromFile(
+    file: File,
     reqWidth: Int,
     reqHeight: Int
 ): Bitmap {

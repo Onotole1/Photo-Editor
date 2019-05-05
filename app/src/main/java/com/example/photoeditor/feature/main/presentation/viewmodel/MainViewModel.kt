@@ -4,12 +4,15 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.databinding.ObservableArrayMap
 import androidx.databinding.ObservableField
+import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
 import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.ItemControllerBinding
 import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.ItemProgressBinding
 import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.ItemResultBinding
 import com.example.photoeditor.shared.domain.model.State
+import com.example.photoeditor.shared.domain.usecase.DefaultCompletableObserver
 import com.example.photoeditor.shared.domain.usecase.DefaultObserver
 import com.example.photoeditor.shared.domain.usecase.UseCase
+import com.example.photoeditor.shared.domain.usecase.UseCaseCompletable
 import com.example.photoeditor.shared.presentation.viewmodel.BaseViewModel
 import com.example.photoeditor.shared.presentation.viewmodel.EventsDispatcher
 import com.example.photoeditor.shared.presentation.viewmodel.EventsDispatcherOwner
@@ -19,11 +22,21 @@ import com.example.photoeditor.utils.databinding.withChangedCallback
 class MainViewModel(
     override val eventsDispatcher: EventsDispatcher<EventsListener>,
     private val getBitmapFromUri: UseCase<Bitmap, Uri>,
-    private val rotateBitmap: UseCase<State<Bitmap>, Bitmap>,
-    private val mirrorBitmap: UseCase<State<Bitmap>, Bitmap>,
-    private val invertBitmap: UseCase<State<Bitmap>, Bitmap>,
-    private val getBitmapFromUrl: UseCase<State<Bitmap>, String>
-) : BaseViewModel(getBitmapFromUri, rotateBitmap, mirrorBitmap, invertBitmap, getBitmapFromUrl),
+    private val rotateBitmap: UseCase<State<Bitmap>, BitmapWithId>,
+    private val mirrorBitmap: UseCase<State<Bitmap>, BitmapWithId>,
+    private val invertBitmap: UseCase<State<Bitmap>, BitmapWithId>,
+    private val getBitmapFromUrl: UseCase<State<Bitmap>, String>,
+    private val removeResult: UseCaseCompletable<Long>,
+    getResults: UseCase<List<BitmapWithId>, Unit>
+) : BaseViewModel(
+    getBitmapFromUri,
+    rotateBitmap,
+    mirrorBitmap,
+    invertBitmap,
+    getBitmapFromUrl,
+    removeResult,
+    getResults
+),
     EventsDispatcherOwner<MainViewModel.EventsListener> {
 
     private val items = ObservableArrayMap<Long, BindingClass>().withChangedCallback { source, key ->
@@ -36,6 +49,8 @@ class MainViewModel(
 
     init {
         items[ITEM_CONTROLLER_ID] = ItemControllerBinding(ITEM_CONTROLLER_ID, this)
+
+        getResults.execute(resultsObserver(), Unit)
     }
 
     fun setImage(uri: Uri) {
@@ -63,7 +78,8 @@ class MainViewModel(
     private fun updateControllerProgress(progress: Int?) {
         val controller = items[ITEM_CONTROLLER_ID] as? ItemControllerBinding ?: return
 
-        items[ITEM_CONTROLLER_ID] = ItemControllerBinding(controller.itemId, this@MainViewModel, controller.image, progress)
+        items[ITEM_CONTROLLER_ID] =
+            ItemControllerBinding(controller.itemId, this@MainViewModel, controller.image, progress)
     }
 
     fun downloadImageByUrl(url: String) {
@@ -95,7 +111,7 @@ class MainViewModel(
 
     fun removeImage() {
         selectedItem?.also {
-            items.remove(it)
+            removeResult.execute(removeResultObserver(it), it)
         }
     }
 
@@ -105,11 +121,14 @@ class MainViewModel(
         items[ITEM_CONTROLLER_ID] = ItemControllerBinding(ITEM_CONTROLLER_ID, this, selectedItem.image)
     }
 
-    private fun executeTransform(transform: UseCase<State<Bitmap>, Bitmap>, bitmap: Bitmap) {
+    private fun executeTransform(transform: UseCase<State<Bitmap>, BitmapWithId>, bitmap: Bitmap) {
         val newId = bindingList.get()?.lastOrNull()?.itemId?.inc() ?: return
 
         items[newId] = ItemProgressBinding(newId)
-        transform.execute(transformObserver(newId), bitmap)
+        transform.execute(
+            transformObserver(newId),
+            BitmapWithId(newId, bitmap)
+        )
     }
 
     private fun updateList(source: Map<Long, BindingClass>, key: Long) {
@@ -157,6 +176,24 @@ class MainViewModel(
         }
     }
 
+    private fun removeResultObserver(itemId: Long) = object : DefaultCompletableObserver() {
+        override fun onComplete() {
+            items.remove(itemId)
+        }
+
+        override fun onError(e: Throwable) {
+            eventsDispatcher.dispatchEvent { showError(e) }
+        }
+    }
+
+    private fun resultsObserver() = object : DefaultObserver<List<BitmapWithId>>() {
+        override fun onNext(value: List<BitmapWithId>) {
+            value.forEach {
+                items[it.imageId] = ItemResultBinding(it.imageId, this@MainViewModel, it.source)
+            }
+        }
+    }
+
     private fun bitmapDownloadObserver() = object : DefaultObserver<State<Bitmap>>() {
         override fun onNext(value: State<Bitmap>) {
             when (value) {
@@ -170,7 +207,6 @@ class MainViewModel(
             eventsDispatcher.dispatchEvent { showError(e) }
         }
     }
-
 
 
     private companion object {

@@ -1,16 +1,17 @@
 package com.example.photoeditor.shared.domain.usecase
 
-import io.reactivex.Observable
-import io.reactivex.observers.DisposableObserver
+import io.reactivex.Completable
+import io.reactivex.observers.DisposableCompletableObserver
 
 
-abstract class UseCase<T, Params> (
+abstract class UseCaseCompletable<Params> (
     executionThread: ExecutionThread,
     postThreadExecutionThread: ExecutionThread
 ): BaseUseCase(executionThread, postThreadExecutionThread) {
-    abstract fun buildUseCaseObservable(params: Params): Observable<T>
 
-    fun execute(observer: DisposableObserver<T>, params: Params) {
+    abstract fun buildUseCaseObservable(params: Params): Completable
+
+    fun execute(observer: DisposableCompletableObserver, params: Params) {
         val observable = buildUseCaseObservable(params)
             .subscribeOn(executionThread.scheduler)
             .observeOn(postThreadExecutionThread.scheduler)

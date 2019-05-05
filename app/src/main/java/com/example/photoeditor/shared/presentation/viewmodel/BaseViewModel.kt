@@ -1,9 +1,9 @@
 package com.example.photoeditor.shared.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.photoeditor.shared.domain.usecase.UseCase
+import com.example.photoeditor.shared.domain.usecase.BaseUseCase
 
-abstract class BaseViewModel(vararg useCases: UseCase<*, *>): ViewModel() {
+abstract class BaseViewModel(vararg useCases: BaseUseCase): ViewModel() {
     private val useCaseContainer = useCases
 
     override fun onCleared() {
