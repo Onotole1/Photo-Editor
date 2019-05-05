@@ -8,6 +8,7 @@ import io.reactivex.Observable
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.net.HttpURLConnection
 import java.net.URL
 import javax.inject.Inject
 import javax.inject.Named
@@ -21,11 +22,15 @@ class NetworkBitmapDataSource @Inject constructor(
         return Observable.create { emitter ->
             val imagePath = "$imagesPath/${url.substringAfterLast("/")}"
 
+            var connection: HttpURLConnection? = null
             try {
                 val wrappedUrl = URL(url)
 
-                val connection = wrappedUrl.openConnection()
-                connection.connect()
+                connection = (wrappedUrl.openConnection() as HttpURLConnection).apply {
+                    connectTimeout = CONNECT_TIMEOUT_MILLIS
+                    readTimeout = READ_TIMEOUT_MILLIS
+                    connect()
+                }
 
                 val lengthOfFile = connection.contentLength
 
@@ -53,6 +58,7 @@ class NetworkBitmapDataSource @Inject constructor(
                             count = input.read(data)
 
                             if (emitter.isDisposed) {
+                                File(imagePath).delete()
                                 return@create
                             }
                         }
@@ -70,8 +76,13 @@ class NetworkBitmapDataSource @Inject constructor(
                     }
                 }
             } catch (e: Throwable) {
-                File(imagePath).delete()
+                if (e is NullPointerException) {
+                    File(imagePath).delete()
+                }
+
                 emitter.onError(e)
+            } finally {
+                connection?.disconnect()
             }
         }
     }
@@ -79,5 +90,7 @@ class NetworkBitmapDataSource @Inject constructor(
     private companion object {
         const val BUFFER_SIZE_BYTES = 8192
         const val OUTPUT_ARRAY_SIZE_BYTES = 1024
+        const val CONNECT_TIMEOUT_MILLIS = 15000
+        const val READ_TIMEOUT_MILLIS = 30000
     }
 }

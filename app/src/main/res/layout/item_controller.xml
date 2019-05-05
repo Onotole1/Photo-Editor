@@ -66,7 +66,7 @@
             app:layout_constraintEnd_toEndOf="@id/item_controller_image"
             app:layout_constraintStart_toStartOf="@id/item_controller_image"
             app:layout_constraintTop_toTopOf="@id/item_controller_image"
-            app:visibleOrGone="@{image == null}"
+            app:visibleOrGone="@{image == null &amp;&amp; progress == null}"
             tools:visibility="invisible" />
 
         <Button
