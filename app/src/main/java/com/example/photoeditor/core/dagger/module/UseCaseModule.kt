@@ -1,10 +1,9 @@
 package com.example.photoeditor.core.dagger.module
 
 import android.graphics.Bitmap
-import android.net.Uri
-import com.example.photoeditor.feature.main.domain.usecase.getbitmapfromuri.GetBitmapFromUri
-import com.example.photoeditor.feature.main.domain.usecase.getbitmapfromurl.GetBitmapFromUrl
 import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
+import com.example.photoeditor.feature.main.domain.entity.UriWithId
+import com.example.photoeditor.feature.main.domain.usecase.getbitmapfromuri.GetBitmapFromUri
 import com.example.photoeditor.feature.main.domain.usecase.getresults.GetResults
 import com.example.photoeditor.feature.main.domain.usecase.removeresult.RemoveResult
 import com.example.photoeditor.feature.main.domain.usecase.transform.invertbitmap.InvertBitmap
@@ -31,10 +30,7 @@ class UseCaseModule {
     @Module
     interface BindsModule {
         @Binds
-        fun provideGetBitmapFromUri(getBitmapFromUri: GetBitmapFromUri): UseCase<Bitmap, Uri>
-
-        @Binds
-        fun provideGetBitmapFromUrl(getBitmapFromUri: GetBitmapFromUrl): UseCase<State<Bitmap>, String>
+        fun provideGetBitmapFromUri(getBitmapFromUri: GetBitmapFromUri): UseCase<State<Bitmap>, UriWithId>
 
         @Named("rotate_bitmap")
         @Binds

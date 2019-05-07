@@ -5,6 +5,7 @@ import android.graphics.*
 import android.net.Uri
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.InputStream
 
 
@@ -55,6 +56,12 @@ fun decodeSampledBitmapFromFile(
         reqWidth,
         reqHeight
     )
+}
+
+fun Bitmap.saveToFile(file: File) {
+    FileOutputStream(file).use {
+        compress(Bitmap.CompressFormat.PNG, 100, it)
+    }
 }
 
 fun decodeSampledBitmapFromFile(

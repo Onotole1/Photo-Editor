@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.photoeditor.R
 import com.example.photoeditor.databinding.ActivityMainBinding
 import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
+import com.example.photoeditor.feature.main.domain.entity.UriWithId
 import com.example.photoeditor.feature.main.presentation.view.MainActivity
 import com.example.photoeditor.feature.main.presentation.view.adapter.TableDecoration
 import com.example.photoeditor.feature.main.presentation.viewmodel.MainViewModel
@@ -26,14 +27,13 @@ class MainActivityModule {
     @Provides
     fun provideViewModel(
         context: MainActivity,
-        getBitmapFromUri: UseCase<Bitmap, Uri>,
+        getBitmapFromUri: UseCase<State<Bitmap>, UriWithId>,
         @Named("rotate_bitmap")
         rotateBitmap: UseCase<State<Bitmap>, BitmapWithId>,
         @Named("invert_bitmap")
         invertBitmap: UseCase<State<Bitmap>, BitmapWithId>,
         @Named("mirror_bitmap")
         mirrorBitmap: UseCase<State<Bitmap>, BitmapWithId>,
-        getBitmapFromUrl: UseCase<State<Bitmap>, String>,
         removeResult: UseCaseCompletable<Long>,
         getResults: UseCase<List<BitmapWithId>, Unit>
     ): MainViewModel = ViewModelFactory {
@@ -43,7 +43,6 @@ class MainActivityModule {
             rotateBitmap,
             mirrorBitmap,
             invertBitmap,
-            getBitmapFromUrl,
             removeResult,
             getResults
         )

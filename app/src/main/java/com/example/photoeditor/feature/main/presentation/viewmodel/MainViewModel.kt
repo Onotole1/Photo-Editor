@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.databinding.ObservableArrayMap
 import androidx.databinding.ObservableField
 import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
+import com.example.photoeditor.feature.main.domain.entity.UriWithId
 import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.ItemControllerBinding
 import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.ItemProgressBinding
 import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.ItemResultBinding
@@ -21,11 +22,10 @@ import com.example.photoeditor.utils.databinding.withChangedCallback
 
 class MainViewModel(
     override val eventsDispatcher: EventsDispatcher<EventsListener>,
-    private val getBitmapFromUri: UseCase<Bitmap, Uri>,
+    private val getBitmapFromUri: UseCase<State<Bitmap>, UriWithId>,
     private val rotateBitmap: UseCase<State<Bitmap>, BitmapWithId>,
     private val mirrorBitmap: UseCase<State<Bitmap>, BitmapWithId>,
     private val invertBitmap: UseCase<State<Bitmap>, BitmapWithId>,
-    private val getBitmapFromUrl: UseCase<State<Bitmap>, String>,
     private val removeResult: UseCaseCompletable<Long>,
     getResults: UseCase<List<BitmapWithId>, Unit>
 ) : BaseViewModel(
@@ -33,7 +33,6 @@ class MainViewModel(
     rotateBitmap,
     mirrorBitmap,
     invertBitmap,
-    getBitmapFromUrl,
     removeResult,
     getResults
 ),
@@ -54,19 +53,7 @@ class MainViewModel(
     }
 
     fun setImage(uri: Uri) {
-        getBitmapFromUri.execute(bitmapSelectObserver(), uri)
-    }
-
-    private fun bitmapSelectObserver() = object : DefaultObserver<Bitmap>() {
-
-        override fun onNext(value: Bitmap) {
-            updateControllerImage(value)
-        }
-
-        override fun onError(e: Throwable) {
-            eventsDispatcher.dispatchEvent { showError(e) }
-        }
-
+        getBitmapFromUri.execute(bitmapDownloadObserver(), UriWithId(uri, ITEM_CONTROLLER_ID))
     }
 
     private fun updateControllerImage(bitmap: Bitmap) {
@@ -83,7 +70,7 @@ class MainViewModel(
     }
 
     fun downloadImageByUrl(url: String) {
-        getBitmapFromUrl.execute(bitmapDownloadObserver(), url)
+        getBitmapFromUri.execute(bitmapDownloadObserver(), UriWithId(Uri.parse(url), ITEM_CONTROLLER_ID))
     }
 
     fun onSelectImageClick() {
@@ -189,7 +176,11 @@ class MainViewModel(
     private fun resultsObserver() = object : DefaultObserver<List<BitmapWithId>>() {
         override fun onNext(value: List<BitmapWithId>) {
             value.forEach {
-                items[it.imageId] = ItemResultBinding(it.imageId, this@MainViewModel, it.source)
+                if (it.imageId == ITEM_CONTROLLER_ID) {
+                    items[it.imageId] = ItemControllerBinding(it.imageId, this@MainViewModel, it.source)
+                } else {
+                    items[it.imageId] = ItemResultBinding(it.imageId, this@MainViewModel, it.source)
+                }
             }
         }
     }

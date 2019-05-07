@@ -1,14 +1,12 @@
 package com.example.photoeditor.core.dagger.module
 
+import android.content.ContentResolver
 import com.example.photoeditor.core.MainApplication
-import com.example.photoeditor.feature.main.data.entity.ReqBitmapSize
 import com.example.photoeditor.feature.main.data.repository.getbitmapfromuri.BitmapFromUriRepositoryImpl
-import com.example.photoeditor.feature.main.data.repository.getbitmapfromurl.BitmapFromUrlRepositoryImpl
 import com.example.photoeditor.feature.main.data.repository.getresults.GetresultsRepositoryImpl
 import com.example.photoeditor.feature.main.data.repository.removeresult.RemoveResultRepositoryImpl
 import com.example.photoeditor.feature.main.data.repository.transform.TransformRepositoryImpl
 import com.example.photoeditor.feature.main.domain.usecase.getbitmapfromuri.BitmapFromUriRepository
-import com.example.photoeditor.feature.main.domain.usecase.getbitmapfromurl.BitmapFromUrlRepository
 import com.example.photoeditor.feature.main.domain.usecase.getresults.GetResultsRepository
 import com.example.photoeditor.feature.main.domain.usecase.removeresult.RemoveResultRepository
 import com.example.photoeditor.feature.main.domain.usecase.transform.TransformRepository
@@ -20,15 +18,13 @@ import dagger.Provides
 class RepositoryModule {
 
     @Provides
-    fun provideBitmapRepository(context: MainApplication, reqBitmapSize: ReqBitmapSize): BitmapFromUriRepository {
-        return BitmapFromUriRepositoryImpl(context.contentResolver, reqBitmapSize)
-    }
+    fun provideContentResolver(context: MainApplication): ContentResolver = context.contentResolver
 
     @Module
     interface BindsModule {
 
         @Binds
-        fun provideBitmapFromUrlRepository(bitmapFromUrlRepository: BitmapFromUrlRepositoryImpl): BitmapFromUrlRepository
+        fun provideBitmapFromUriRepository(bitmapFromUriRepository: BitmapFromUriRepositoryImpl): BitmapFromUriRepository
 
         @Binds
         fun provideTransformRepository(transformRepository: TransformRepositoryImpl): TransformRepository

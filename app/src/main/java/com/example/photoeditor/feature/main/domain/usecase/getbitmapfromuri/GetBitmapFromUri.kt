@@ -1,7 +1,8 @@
 package com.example.photoeditor.feature.main.domain.usecase.getbitmapfromuri
 
 import android.graphics.Bitmap
-import android.net.Uri
+import com.example.photoeditor.feature.main.domain.entity.UriWithId
+import com.example.photoeditor.shared.domain.model.State
 import com.example.photoeditor.shared.domain.usecase.ExecutionThread
 import com.example.photoeditor.shared.domain.usecase.UseCase
 import io.reactivex.Observable
@@ -14,14 +15,12 @@ class GetBitmapFromUri @Inject constructor(
     workerThreadExecutor: ExecutionThread,
     @Named("post_execution_thread")
     postThreadExecutor: ExecutionThread
-) : UseCase<Bitmap, Uri>(
+) : UseCase<State<Bitmap>, UriWithId>(
     workerThreadExecutor,
     postThreadExecutor
 ) {
-    override fun buildUseCaseObservable(params: Uri): Observable<Bitmap> {
-        return Observable.fromCallable {
-            repository.getBitmapFromUri(params)
-        }
+    override fun buildUseCaseObservable(params: UriWithId): Observable<State<Bitmap>> {
+        return repository.getBitmapFromUri(params)
     }
 
 }

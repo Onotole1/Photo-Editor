@@ -1,7 +1,8 @@
-package com.example.photoeditor.feature.main.data.repository.getbitmapfromurl.datasource
+package com.example.photoeditor.feature.main.data.repository.getbitmapfromuri.datasource
 
 import android.graphics.Bitmap
 import com.example.photoeditor.feature.main.data.entity.ReqBitmapSize
+import com.example.photoeditor.feature.main.domain.entity.UriWithId
 import com.example.photoeditor.shared.domain.model.State
 import com.example.photoeditor.utils.decodeSampledBitmapFromFile
 import io.reactivex.Observable
@@ -15,16 +16,17 @@ import javax.inject.Named
 
 class NetworkBitmapDataSource @Inject constructor(
     private val reqBitmapSize: ReqBitmapSize,
-    @Named("images_path")
-    private val imagesPath: String
+    @Named("controller_image_dir")
+    private val imagesPath: File
 ) : BitmapDataSource {
-    override fun getBitmapFromUrl(url: String): Observable<State<Bitmap>> {
+    override fun getBitmapFromUrl(uri: UriWithId): Observable<State<Bitmap>> {
         return Observable.create { emitter ->
-            val imagePath = "$imagesPath/${url.substringAfterLast("/")}"
+
+            val imagePath = File(imagesPath, uri.itemId.toString())
 
             var connection: HttpURLConnection? = null
             try {
-                val wrappedUrl = URL(url)
+                val wrappedUrl = URL(uri.uri.toString())
 
                 connection = (wrappedUrl.openConnection() as HttpURLConnection).apply {
                     connectTimeout = CONNECT_TIMEOUT_MILLIS
@@ -58,7 +60,7 @@ class NetworkBitmapDataSource @Inject constructor(
                             count = input.read(data)
 
                             if (emitter.isDisposed) {
-                                File(imagePath).delete()
+                                imagePath.delete()
                                 return@create
                             }
                         }
@@ -77,7 +79,7 @@ class NetworkBitmapDataSource @Inject constructor(
                 }
             } catch (e: Throwable) {
                 if (e is NullPointerException) {
-                    File(imagePath).delete()
+                    imagePath.delete()
                 }
 
                 emitter.onError(e)
