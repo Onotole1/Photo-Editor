@@ -9,7 +9,7 @@ abstract class UseCaseCompletable<Params> (
     postThreadExecutionThread: ExecutionThread
 ): BaseUseCase(executionThread, postThreadExecutionThread) {
 
-    abstract fun buildUseCaseObservable(params: Params): Completable
+    protected abstract fun buildUseCaseObservable(params: Params): Completable
 
     fun execute(observer: DisposableCompletableObserver, params: Params) {
         val observable = buildUseCaseObservable(params)

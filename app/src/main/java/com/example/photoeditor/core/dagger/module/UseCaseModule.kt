@@ -2,10 +2,12 @@ package com.example.photoeditor.core.dagger.module
 
 import android.graphics.Bitmap
 import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
+import com.example.photoeditor.feature.main.domain.entity.SetImageRequest
 import com.example.photoeditor.feature.main.domain.entity.UriWithId
 import com.example.photoeditor.feature.main.domain.usecase.getbitmapfromuri.GetBitmapFromUri
 import com.example.photoeditor.feature.main.domain.usecase.getresults.GetResults
 import com.example.photoeditor.feature.main.domain.usecase.removeresult.RemoveResult
+import com.example.photoeditor.feature.main.domain.usecase.setcontrollerimage.SetControllerImage
 import com.example.photoeditor.feature.main.domain.usecase.transform.invertbitmap.InvertBitmap
 import com.example.photoeditor.feature.main.domain.usecase.transform.mirrorbitmap.MirrorBitmap
 import com.example.photoeditor.feature.main.domain.usecase.transform.rotatebitmap.RotateBitmap
@@ -49,5 +51,8 @@ class UseCaseModule {
 
         @Binds
         fun provideRemoveResult(removeResult: RemoveResult): UseCaseCompletable<Long>
+
+        @Binds
+        fun provideSetControllerImage(setControllerImage: SetControllerImage): UseCaseCompletable<SetImageRequest>
     }
 }

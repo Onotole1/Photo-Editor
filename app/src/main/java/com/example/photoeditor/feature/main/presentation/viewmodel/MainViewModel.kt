@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.databinding.ObservableArrayMap
 import androidx.databinding.ObservableField
 import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
+import com.example.photoeditor.feature.main.domain.entity.SetImageRequest
 import com.example.photoeditor.feature.main.domain.entity.UriWithId
 import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.ItemControllerBinding
 import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.ItemProgressBinding
@@ -27,6 +28,7 @@ class MainViewModel(
     private val mirrorBitmap: UseCase<State<Bitmap>, BitmapWithId>,
     private val invertBitmap: UseCase<State<Bitmap>, BitmapWithId>,
     private val removeResult: UseCaseCompletable<Long>,
+    private val setControllerImage: UseCaseCompletable<SetImageRequest>,
     getResults: UseCase<List<BitmapWithId>, Unit>
 ) : BaseViewModel(
     getBitmapFromUri,
@@ -34,6 +36,7 @@ class MainViewModel(
     mirrorBitmap,
     invertBitmap,
     removeResult,
+    setControllerImage,
     getResults
 ),
     EventsDispatcherOwner<MainViewModel.EventsListener> {
@@ -105,7 +108,12 @@ class MainViewModel(
     fun replaceExistingImage() {
         val selectedItem = items.getValue(selectedItem ?: return) as ItemResultBinding
 
-        items[ITEM_CONTROLLER_ID] = ItemControllerBinding(ITEM_CONTROLLER_ID, this, selectedItem.image)
+        val bitmap = selectedItem.image ?: return
+
+        setControllerImage.execute(
+            setControllerImageObserver(bitmap),
+            SetImageRequest(selectedItem.itemId, ITEM_CONTROLLER_ID)
+        )
     }
 
     private fun executeTransform(transform: UseCase<State<Bitmap>, BitmapWithId>, bitmap: Bitmap) {
@@ -140,6 +148,16 @@ class MainViewModel(
         }
 
         bindingList.set(newList)
+    }
+
+    private fun setControllerImageObserver(bitmap: Bitmap) = object : DefaultCompletableObserver() {
+        override fun onComplete() {
+            items[ITEM_CONTROLLER_ID] = ItemControllerBinding(ITEM_CONTROLLER_ID, this@MainViewModel, bitmap)
+        }
+
+        override fun onError(e: Throwable) {
+            eventsDispatcher.dispatchEvent { showError(e) }
+        }
     }
 
     private fun transformObserver(itemId: Long) = object : DefaultObserver<State<Bitmap>>() {

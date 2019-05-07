@@ -8,6 +8,8 @@ import com.example.photoeditor.feature.main.data.repository.getresults.datasourc
 import com.example.photoeditor.feature.main.data.repository.getresults.datasource.ResultsDataSource
 import com.example.photoeditor.feature.main.data.repository.removeresult.datasource.DiskRemoveResultSource
 import com.example.photoeditor.feature.main.data.repository.removeresult.datasource.RemoveResultSource
+import com.example.photoeditor.feature.main.data.repository.setcontrollerimage.datasource.DiskSetControllerImageSource
+import com.example.photoeditor.feature.main.data.repository.setcontrollerimage.datasource.SetControllerImageSource
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -49,5 +51,8 @@ class DataSourceModule {
 
         @Binds
         fun provideDiskRemoveResultDataSource(diskRemoveResultSource: DiskRemoveResultSource): RemoveResultSource
+
+        @Binds
+        fun provideDiskSetControllerImageSource(diskSetControllerImageSource: DiskSetControllerImageSource): SetControllerImageSource
     }
 }

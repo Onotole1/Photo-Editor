@@ -8,7 +8,7 @@ abstract class UseCase<T, Params> (
     executionThread: ExecutionThread,
     postThreadExecutionThread: ExecutionThread
 ): BaseUseCase(executionThread, postThreadExecutionThread) {
-    abstract fun buildUseCaseObservable(params: Params): Observable<T>
+    protected abstract fun buildUseCaseObservable(params: Params): Observable<T>
 
     fun execute(observer: DisposableObserver<T>, params: Params) {
         val observable = buildUseCaseObservable(params)

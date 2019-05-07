@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.photoeditor.R
 import com.example.photoeditor.databinding.ActivityMainBinding
 import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
+import com.example.photoeditor.feature.main.domain.entity.SetImageRequest
 import com.example.photoeditor.feature.main.domain.entity.UriWithId
 import com.example.photoeditor.feature.main.presentation.view.MainActivity
 import com.example.photoeditor.feature.main.presentation.view.adapter.TableDecoration
@@ -35,7 +36,8 @@ class MainActivityModule {
         @Named("mirror_bitmap")
         mirrorBitmap: UseCase<State<Bitmap>, BitmapWithId>,
         removeResult: UseCaseCompletable<Long>,
-        getResults: UseCase<List<BitmapWithId>, Unit>
+        getResults: UseCase<List<BitmapWithId>, Unit>,
+        setControllerImage: UseCaseCompletable<SetImageRequest>
     ): MainViewModel = ViewModelFactory {
         MainViewModel(
             EventsDispatcher(),
@@ -44,6 +46,7 @@ class MainActivityModule {
             mirrorBitmap,
             invertBitmap,
             removeResult,
+            setControllerImage,
             getResults
         )
     }.let {
