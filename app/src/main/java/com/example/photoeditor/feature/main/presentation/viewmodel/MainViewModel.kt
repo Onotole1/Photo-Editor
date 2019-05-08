@@ -133,13 +133,19 @@ class MainViewModel(
     }
 
     private fun transformObserver(itemPosition: Int, itemId: Long) = object : DefaultObserver<State<Bitmap>>() {
+        var currentPosition = itemPosition
+
         override fun onNext(value: State<Bitmap>) {
 
-            when (value) {
-                is State.Progress -> bindingList[itemPosition] = ItemProgressBinding(itemId, value.progress ?: 0)
-                is State.Data -> {
-                    bindingList[itemPosition] = ItemResultBinding(itemId, value.data)
+            if (bindingList.getOrNull(currentPosition)?.itemId != itemId) {
+                currentPosition = bindingList.indexOfFirst {
+                    it.itemId == itemId
                 }
+            }
+
+            when (value) {
+                is State.Progress -> bindingList[currentPosition] = ItemProgressBinding(itemId, value.progress ?: 0)
+                is State.Data -> bindingList[currentPosition] = ItemResultBinding(itemId, value.data)
             }
         }
 
