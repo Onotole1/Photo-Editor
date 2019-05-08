@@ -2,8 +2,7 @@ package com.example.photoeditor.feature.main.presentation.viewmodel
 
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.databinding.ObservableArrayMap
-import androidx.databinding.ObservableField
+import androidx.databinding.ObservableArrayList
 import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
 import com.example.photoeditor.feature.main.domain.entity.SetImageRequest
 import com.example.photoeditor.feature.main.domain.entity.UriWithId
@@ -19,7 +18,6 @@ import com.example.photoeditor.shared.presentation.viewmodel.BaseViewModel
 import com.example.photoeditor.shared.presentation.viewmodel.EventsDispatcher
 import com.example.photoeditor.shared.presentation.viewmodel.EventsDispatcherOwner
 import com.example.photoeditor.utils.databinding.adapter.BindingClass
-import com.example.photoeditor.utils.databinding.withChangedCallback
 
 class MainViewModel(
     override val eventsDispatcher: EventsDispatcher<EventsListener>,
@@ -41,16 +39,12 @@ class MainViewModel(
 ),
     EventsDispatcherOwner<MainViewModel.EventsListener> {
 
-    private val items = ObservableArrayMap<Long, BindingClass>().withChangedCallback { source, key ->
-        updateList(source, key)
-    }
+    private var selectedItemPosition: Int? = null
 
-    private var selectedItem: Long? = null
-
-    val bindingList = ObservableField<List<BindingClass>>()
+    val bindingList = ObservableArrayList<BindingClass>()
 
     init {
-        items[ITEM_CONTROLLER_ID] = ItemControllerBinding(ITEM_CONTROLLER_ID, this)
+        bindingList.add(ItemControllerBinding(ITEM_CONTROLLER_ID, this))
 
         getResults.execute(resultsObserver(), Unit)
     }
@@ -60,15 +54,15 @@ class MainViewModel(
     }
 
     private fun updateControllerImage(bitmap: Bitmap) {
-        val controller = items[ITEM_CONTROLLER_ID] ?: return
+        val controller = bindingList[0] ?: return
 
-        items[ITEM_CONTROLLER_ID] = ItemControllerBinding(controller.itemId, this@MainViewModel, bitmap)
+        bindingList[0] = ItemControllerBinding(controller.itemId, this@MainViewModel, bitmap)
     }
 
     private fun updateControllerProgress(progress: Int?) {
-        val controller = items[ITEM_CONTROLLER_ID] as? ItemControllerBinding ?: return
+        val controller = bindingList[0] as? ItemControllerBinding ?: return
 
-        items[ITEM_CONTROLLER_ID] =
+        bindingList[0] =
             ItemControllerBinding(controller.itemId, this@MainViewModel, controller.image, progress)
     }
 
@@ -94,19 +88,20 @@ class MainViewModel(
         executeTransform(mirrorBitmap, bitmap)
     }
 
-    fun onImageClick(itemId: Long) {
-        selectedItem = itemId
+    fun onImageClick(itemPosition: Int) {
+        selectedItemPosition = itemPosition
         eventsDispatcher.dispatchEvent { showReplaceOrRemoveDialog() }
     }
 
     fun removeImage() {
-        selectedItem?.also {
-            removeResult.execute(removeResultObserver(it), it)
+        selectedItemPosition?.also {
+            val itemId = bindingList[it].itemId
+            removeResult.execute(removeResultObserver(itemId), itemId)
         }
     }
 
     fun replaceExistingImage() {
-        val selectedItem = items.getValue(selectedItem ?: return) as ItemResultBinding
+        val selectedItem = bindingList.getOrNull(selectedItemPosition ?: return) as ItemResultBinding
 
         val bitmap = selectedItem.image ?: return
 
@@ -117,42 +112,19 @@ class MainViewModel(
     }
 
     private fun executeTransform(transform: UseCase<State<Bitmap>, BitmapWithId>, bitmap: Bitmap) {
-        val newId = bindingList.get()?.lastOrNull()?.itemId?.inc() ?: return
+        val newId = bindingList.lastOrNull()?.itemId?.inc() ?: return
 
-        items[newId] = ItemProgressBinding(newId)
+        bindingList.add(ItemProgressBinding(newId))
+
         transform.execute(
-            transformObserver(newId),
+            transformObserver(bindingList.lastIndex, newId),
             BitmapWithId(newId, bitmap)
         )
     }
 
-    private fun updateList(source: Map<Long, BindingClass>, key: Long) {
-        val newItem = source[key]
-
-        val newList = bindingList.get().orEmpty().toMutableList()
-
-        if (newItem == null) {
-            newList.removeAll {
-                it.itemId == key
-            }
-        } else {
-            newList.indexOf(newItem).let {
-                newList.apply {
-                    if (it >= 0) {
-                        this[it] = newItem
-                    } else {
-                        add(newItem)
-                    }
-                }
-            }
-        }
-
-        bindingList.set(newList)
-    }
-
     private fun setControllerImageObserver(bitmap: Bitmap) = object : DefaultCompletableObserver() {
         override fun onComplete() {
-            items[ITEM_CONTROLLER_ID] = ItemControllerBinding(ITEM_CONTROLLER_ID, this@MainViewModel, bitmap)
+            bindingList[0] = ItemControllerBinding(ITEM_CONTROLLER_ID, this@MainViewModel, bitmap)
         }
 
         override fun onError(e: Throwable) {
@@ -160,30 +132,28 @@ class MainViewModel(
         }
     }
 
-    private fun transformObserver(itemId: Long) = object : DefaultObserver<State<Bitmap>>() {
+    private fun transformObserver(itemPosition: Int, itemId: Long) = object : DefaultObserver<State<Bitmap>>() {
         override fun onNext(value: State<Bitmap>) {
 
             when (value) {
-                is State.Progress -> items[itemId] = ItemProgressBinding(itemId, value.progress ?: 0)
+                is State.Progress -> bindingList[itemPosition] = ItemProgressBinding(itemId, value.progress ?: 0)
                 is State.Data -> {
-                    items[itemId] = ItemResultBinding(
-                        itemId,
-                        this@MainViewModel,
-                        value.data
-                    )
+                    bindingList[itemPosition] = ItemResultBinding(itemId, value.data)
                 }
             }
         }
 
         override fun onError(e: Throwable) {
-            items.remove(itemId)
+            bindingList.removeAt(itemPosition)
             eventsDispatcher.dispatchEvent { showError(e) }
         }
     }
 
     private fun removeResultObserver(itemId: Long) = object : DefaultCompletableObserver() {
         override fun onComplete() {
-            items.remove(itemId)
+            bindingList.removeAll {
+                it.itemId == itemId
+            }
         }
 
         override fun onError(e: Throwable) {
@@ -193,11 +163,13 @@ class MainViewModel(
 
     private fun resultsObserver() = object : DefaultObserver<List<BitmapWithId>>() {
         override fun onNext(value: List<BitmapWithId>) {
-            value.forEach {
+            value.sortedBy {
+                it.imageId
+            }.forEach {
                 if (it.imageId == ITEM_CONTROLLER_ID) {
-                    items[it.imageId] = ItemControllerBinding(it.imageId, this@MainViewModel, it.source)
+                    bindingList[0] = ItemControllerBinding(it.imageId, this@MainViewModel, it.source)
                 } else {
-                    items[it.imageId] = ItemResultBinding(it.imageId, this@MainViewModel, it.source)
+                    bindingList.add(ItemResultBinding(it.imageId, it.source))
                 }
             }
         }
@@ -219,7 +191,7 @@ class MainViewModel(
 
 
     private companion object {
-        const val ITEM_CONTROLLER_ID = 435L
+        const val ITEM_CONTROLLER_ID = 0L
     }
 
     interface EventsListener {

@@ -1,8 +1,9 @@
 package com.example.photoeditor.feature.main.dagger
 
 import android.graphics.Bitmap
-import android.net.Uri
+import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModelProvider
 import com.example.photoeditor.R
 import com.example.photoeditor.databinding.ActivityMainBinding
@@ -18,6 +19,7 @@ import com.example.photoeditor.shared.domain.usecase.UseCaseCompletable
 import com.example.photoeditor.shared.presentation.viewmodel.EventsDispatcher
 import com.example.photoeditor.shared.presentation.viewmodel.ViewModelFactory
 import com.example.photoeditor.utils.databinding.adapter.BinderAdapter
+import com.example.photoeditor.utils.databinding.adapter.BindingViewHolder
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -54,12 +56,29 @@ class MainActivityModule {
     }
 
     @Provides
-    fun provideBinding(context: MainActivity): ActivityMainBinding {
+    fun provideBinding(context: MainActivity, viewModel: MainViewModel): ActivityMainBinding {
         return DataBindingUtil.setContentView<ActivityMainBinding>(context, R.layout.activity_main).apply {
             activityMainRecyclerView.apply {
-                adapter = BinderAdapter(context)
+                adapter = createAdapter(context, viewModel)
+
                 addItemDecoration(TableDecoration(context))
             }
         }
     }
+
+    private fun createAdapter(context: MainActivity, viewModel: MainViewModel): BinderAdapter =
+        object : BinderAdapter(context) {
+
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingViewHolder<ViewDataBinding> {
+
+                return super.onCreateViewHolder(parent, viewType).also { binding ->
+
+                    if (viewType == R.layout.item_result) {
+                        binding.itemView.setOnClickListener {
+                            viewModel.onImageClick(binding.adapterPosition)
+                        }
+                    }
+                }
+            }
+        }
 }

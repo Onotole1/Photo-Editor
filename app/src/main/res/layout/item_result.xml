@@ -4,19 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.example.photoeditor.feature.main.presentation.viewmodel.MainViewModel" />
-
         <variable
             name="image"
             type="android.graphics.Bitmap" />
-
-        <variable
-            name="itemId"
-            type="long" />
-
-        <variable
-            name="viewModel"
-            type="MainViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -24,8 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/material_padding_medium"
-        android:layout_marginEnd="@dimen/material_padding_medium"
-        android:onClick="@{() -> viewModel.onImageClick(itemId)}">
+        android:layout_marginEnd="@dimen/material_padding_medium">
 
         <ImageView
             android:layout_width="match_parent"

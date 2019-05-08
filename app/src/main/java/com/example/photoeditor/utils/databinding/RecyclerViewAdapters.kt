@@ -20,6 +20,6 @@ object RecyclerViewAdapters {
             DiffUtil.calculateDiff(it)
         }
 
-        bindingAdapter.setItems(result, newList)
+        bindingAdapter.setItems(result, newList.toList())
     }
 }

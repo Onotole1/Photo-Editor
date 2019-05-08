@@ -7,7 +7,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
-class BinderAdapter(private val mLifecycleOwner: LifecycleOwner? = null) : RecyclerView.Adapter<BindingViewHolder<ViewDataBinding>>() {
+open class BinderAdapter(private val mLifecycleOwner: LifecycleOwner? = null) : RecyclerView.Adapter<BindingViewHolder<ViewDataBinding>>() {
     var itemList: List<BindingClass> = emptyList()
         private set
 
