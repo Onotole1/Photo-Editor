@@ -51,6 +51,13 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
         }
     }
 
+    override fun showExifInfo(exif: String) {
+        showAlert(EXIF_DIALOG) {
+            positiveButton = android.R.string.ok
+            message = exif
+        }
+    }
+
     override fun showError(throwable: Throwable) {
         toast(throwable.toUserFriendlyError(this))
     }
@@ -192,6 +199,8 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
         const val PICKER_IMAGE_DIALOG = "com.example.photoeditor.feature.main.presentation.view.PICKER_IMAGE_DIALOG"
 
         const val DOWNLOAD_IMAGE_DIALOG = "com.example.photoeditor.feature.main.presentation.view.DOWNLOAD_IMAGE_DIALOG"
+
+        const val EXIF_DIALOG = "com.example.photoeditor.feature.main.presentation.view.EXIF_DIALOG"
 
         const val REPLACE_OR_REMOVE_IMAGE_DIALOG =
             "com.example.photoeditor.feature.main.presentation.view.REPLACE_OR_REMOVE_IMAGE_DIALOG"

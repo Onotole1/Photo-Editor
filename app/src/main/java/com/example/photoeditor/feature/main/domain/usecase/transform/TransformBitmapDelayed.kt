@@ -1,7 +1,10 @@
 package com.example.photoeditor.feature.main.domain.usecase.transform
 
 import android.graphics.Bitmap
+import androidx.exifinterface.media.ExifInterface
+import com.example.photoeditor.BuildConfig
 import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
+import com.example.photoeditor.feature.main.domain.usecase.getexif.GetExifRepository
 import com.example.photoeditor.shared.domain.model.State
 import com.example.photoeditor.shared.domain.usecase.ExecutionThread
 import com.example.photoeditor.shared.domain.usecase.RandomGenerator
@@ -12,7 +15,8 @@ import java.util.concurrent.TimeUnit
 
 abstract class TransformBitmapDelayed(
     private val randomGenerator: RandomGenerator<Long>,
-    private val repository: TransformRepository,
+    private val receiver: TransformReceiver,
+    private val repository: GetExifRepository,
     workerThreadExecutor: ExecutionThread,
     postThreadExecutor: ExecutionThread
 ) : UseCase<State<Bitmap>, BitmapWithId>(workerThreadExecutor, postThreadExecutor) {
@@ -27,9 +31,15 @@ abstract class TransformBitmapDelayed(
 
         return Observable.combineLatest(
             interval,
-            bitmapSource(params.source).map {
-                repository.saveBitmapToFile(params.copy(source = it))
-                it
+            bitmapSource(params.source).flatMap { bitmap ->
+                repository.getExif().map { exif ->
+                    receiver.saveBitmapToFile(params.copy(source = bitmap), exif.toMutableMap().apply {
+                        set(ExifInterface.TAG_IMAGE_LENGTH, bitmap.height.toString())
+                        set(ExifInterface.TAG_IMAGE_WIDTH, bitmap.width.toString())
+                        set(ExifInterface.TAG_MODEL, BuildConfig.APPLICATION_ID)
+                    })
+                    bitmap
+                }
             },
             BiFunction<Long, Bitmap, State<Bitmap>> { seconds: Long, bitmap: Bitmap ->
                 if (max == seconds) {

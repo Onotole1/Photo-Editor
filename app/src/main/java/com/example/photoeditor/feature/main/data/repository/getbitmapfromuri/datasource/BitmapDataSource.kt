@@ -6,5 +6,5 @@ import com.example.photoeditor.shared.domain.model.State
 import io.reactivex.Observable
 
 interface BitmapDataSource {
-    fun getBitmapFromUrl(uri: UriWithId): Observable<State<Bitmap>>
+    fun getBitmapFromUrl(uriWithId: UriWithId): Observable<State<Bitmap>>
 }

@@ -1,11 +1,7 @@
 package com.example.photoeditor.utils
 
-import android.content.ContentResolver
 import android.graphics.*
-import android.net.Uri
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.io.InputStream
 
 
@@ -29,38 +25,9 @@ fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeig
     return inSampleSize
 }
 
-fun decodeSampledBitmapFromUri(
-    contentResolver: ContentResolver,
-    uri: Uri,
-    reqWidth: Int,
-    reqHeight: Int
-): Bitmap {
-    return decodeSampledBitmap(
-        {
-            contentResolver.openInputStream(uri)
-        },
-        reqWidth,
-        reqHeight
-    )
-}
-
-fun decodeSampledBitmapFromFile(
-    file: String,
-    reqWidth: Int,
-    reqHeight: Int
-): Bitmap {
-    return decodeSampledBitmap(
-        {
-            FileInputStream(file)
-        },
-        reqWidth,
-        reqHeight
-    )
-}
-
 fun Bitmap.saveToFile(file: File) {
-    FileOutputStream(file).use {
-        compress(Bitmap.CompressFormat.PNG, 100, it)
+    file.outputStream().use {
+        compress(Bitmap.CompressFormat.JPEG, 100, it)
     }
 }
 
@@ -69,16 +36,16 @@ fun decodeSampledBitmapFromFile(
     reqWidth: Int,
     reqHeight: Int
 ): Bitmap {
-    return decodeSampledBitmap(
+    return decodeSampledBitmapFromStream(
         {
-            FileInputStream(file)
+            file.inputStream()
         },
         reqWidth,
         reqHeight
     )
 }
 
-private fun decodeSampledBitmap(
+fun decodeSampledBitmapFromStream(
     stream: () -> InputStream?,
     reqWidth: Int,
     reqHeight: Int

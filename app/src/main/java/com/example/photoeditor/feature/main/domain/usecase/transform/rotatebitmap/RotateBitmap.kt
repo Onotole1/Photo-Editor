@@ -1,8 +1,9 @@
 package com.example.photoeditor.feature.main.domain.usecase.transform.rotatebitmap
 
 import android.graphics.Bitmap
+import com.example.photoeditor.feature.main.domain.usecase.getexif.GetExifRepository
 import com.example.photoeditor.feature.main.domain.usecase.transform.TransformBitmapDelayed
-import com.example.photoeditor.feature.main.domain.usecase.transform.TransformRepository
+import com.example.photoeditor.feature.main.domain.usecase.transform.TransformReceiver
 import com.example.photoeditor.shared.domain.usecase.ExecutionThread
 import com.example.photoeditor.shared.domain.usecase.RandomGenerator
 import com.example.photoeditor.utils.rotate
@@ -16,10 +17,12 @@ class RotateBitmap @Inject constructor(
     @Named("post_execution_thread")
     postThreadExecutor: ExecutionThread,
     randomGenerator: RandomGenerator<Long>,
-    transformRepository: TransformRepository
+    transformRepository: TransformReceiver,
+    exifRepository: GetExifRepository
 ) : TransformBitmapDelayed(
     randomGenerator,
     transformRepository,
+    exifRepository,
     workerThreadExecutor,
     postThreadExecutor
 ) {

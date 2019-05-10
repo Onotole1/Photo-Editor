@@ -2,20 +2,21 @@ package com.example.photoeditor.shared.presentation.view.dialog
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Parcel
 import android.os.Parcelable
 import android.widget.EditText
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import com.example.photoeditor.shared.presentation.view.fragment.getArgs
 import com.example.photoeditor.shared.presentation.view.fragment.putArgs
+import kotlinx.android.parcel.Parcelize
 
 
 open class EditTextAlertDialog : AlertDialogFragment() {
     private lateinit var editText: EditText
 
-    private lateinit var args: Arguments
+    private lateinit var args: EditTextArguments
 
     override fun setupDialog(builder: AlertDialog.Builder, savedInstanceState: Bundle?) {
         super.setupDialog(builder, savedInstanceState)
@@ -31,9 +32,10 @@ open class EditTextAlertDialog : AlertDialogFragment() {
         builder.setView(editText)
     }
 
-    override fun getArgs(): AlertDialogFragment.Arguments {
-        return (arguments?.getArgs<Arguments>() ?: throw NullPointerException("Args must be set!")).also {
+    override fun getArgs(): Arguments {
+        return (arguments?.getArgs<EditTextArguments>() ?: throw NullPointerException("Args must be set!")).let {
             args = it
+            it.alertArguments
         }
     }
 
@@ -59,46 +61,27 @@ open class EditTextAlertDialog : AlertDialogFragment() {
         fun onTextSelected(text: String)
     }
 
-    class Arguments : AlertDialogFragment.Arguments {
+    @Parcelize
+    data class EditTextArguments(
+        @StringRes val editTextHintRes: Int?,
+        val alertArguments: Arguments
+    ) : Parcelable
 
-        @StringRes
+    class EditTextAlertBuilder(dialogTag: String): AlertBuilder(dialogTag) {
         var editTextHintRes: Int? = null
 
-        constructor(parcel: Parcel) : super(parcel) {
-            editTextHintRes = parcel.readValue(Int::class.java.classLoader) as? Int
-        }
+        private fun buildEditTextArgs() = EditTextArguments(editTextHintRes, buildAlertArgs())
 
-        constructor(dialogTag: String) : super(dialogTag)
-
-        override fun build(): AlertDialogFragment {
+        override fun build(): DialogFragment {
             return EditTextAlertDialog().apply {
-                putArgs(this@Arguments)
-            }
-        }
-
-        override fun writeToParcel(parcel: Parcel, flags: Int) {
-            super.writeToParcel(parcel, flags)
-            parcel.writeValue(editTextHintRes)
-        }
-
-        override fun describeContents(): Int {
-            return 0
-        }
-
-        companion object CREATOR : Parcelable.Creator<Arguments> {
-            override fun createFromParcel(parcel: Parcel): Arguments {
-                return Arguments(parcel)
-            }
-
-            override fun newArray(size: Int): Array<Arguments?> {
-                return arrayOfNulls(size)
+                putArgs(buildEditTextArgs())
             }
         }
     }
 }
 
-fun AppCompatActivity.showEditTextAlert(tag: String, block: EditTextAlertDialog.Arguments.() -> Unit) {
-    EditTextAlertDialog.Arguments(tag)
+fun AppCompatActivity.showEditTextAlert(tag: String, block: EditTextAlertDialog.EditTextAlertBuilder.() -> Unit) {
+    EditTextAlertDialog.EditTextAlertBuilder(tag)
         .also(block)
         .build()
         .show(supportFragmentManager, tag)

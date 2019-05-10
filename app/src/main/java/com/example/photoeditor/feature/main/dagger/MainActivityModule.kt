@@ -38,8 +38,9 @@ class MainActivityModule {
         @Named("mirror_bitmap")
         mirrorBitmap: UseCase<State<Bitmap>, BitmapWithId>,
         removeResult: UseCaseCompletable<Long>,
-        getResults: UseCase<List<BitmapWithId>, Unit>,
-        setControllerImage: UseCaseCompletable<SetImageRequest>
+        setControllerImage: UseCaseCompletable<SetImageRequest>,
+        getExif: UseCase<Map<String, String>, Unit>,
+        getResults: UseCase<List<BitmapWithId>, Unit>
     ): MainViewModel = ViewModelFactory {
         MainViewModel(
             EventsDispatcher(),
@@ -49,6 +50,7 @@ class MainActivityModule {
             invertBitmap,
             removeResult,
             setControllerImage,
+            getExif,
             getResults
         )
     }.let {

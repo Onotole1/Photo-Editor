@@ -1,6 +1,8 @@
 package com.example.photoeditor.feature.main.data.repository.setcontrollerimage.datasource
 
 import com.example.photoeditor.feature.main.domain.entity.SetImageRequest
+import com.example.photoeditor.utils.copyTo
+import com.example.photoeditor.utils.exif
 import io.reactivex.Completable
 import java.io.File
 import javax.inject.Inject
@@ -23,6 +25,8 @@ class DiskSetControllerImageSource @Inject constructor(
             val sourceFile = File(imagesDirResult, request.sourceImageId.toString())
 
             sourceFile.copyTo(destinationFile)
+
+            sourceFile.exif().copyTo(destinationFile.exif())
         }
     }
 }

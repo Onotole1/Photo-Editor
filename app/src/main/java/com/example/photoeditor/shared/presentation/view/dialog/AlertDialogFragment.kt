@@ -4,13 +4,13 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Parcel
 import android.os.Parcelable
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.example.photoeditor.shared.presentation.view.fragment.getArgs
 import com.example.photoeditor.shared.presentation.view.fragment.putArgs
+import kotlinx.android.parcel.Parcelize
 
 open class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListener {
 
@@ -56,6 +56,10 @@ open class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListen
         args.messageRes?.also {
             builder.setMessage(it)
         }
+
+        args.message?.also {
+            builder.setMessage(it)
+        }
     }
 
     override fun onClick(dialog: DialogInterface, which: Int) {
@@ -77,50 +81,38 @@ open class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListen
         fun onListItemClick(dialogTag: String, dialog: AlertDialogFragment, position: Int)
     }
 
-    open class Arguments(val dialogTag: String) : Parcelable {
+    @Parcelize
+    data class Arguments(
+        val dialogTag: String,
+        val positiveButton: Int? = null,
+        val negativeButton: Int? = null,
+        val singleChoiceItemsRes: Int? = null,
+        val messageRes: Int? = null,
+        val message: String? = null
+    ) : Parcelable
 
+    open class AlertBuilder(
+        private val dialogTag: String
+    ) {
         var positiveButton: Int? = null
         var negativeButton: Int? = null
         var singleChoiceItemsRes: Int? = null
         var messageRes: Int? = null
+        var message: String? = null
 
-        constructor(parcel: Parcel) : this(parcel.readString()!!) {
-            positiveButton = parcel.readValue(Int::class.java.classLoader) as? Int
-            negativeButton = parcel.readValue(Int::class.java.classLoader) as? Int
-            singleChoiceItemsRes = parcel.readValue(Int::class.java.classLoader) as? Int
-            messageRes = parcel.readValue(Int::class.java.classLoader) as? Int
-        }
+        protected fun buildAlertArgs() =
+            Arguments(dialogTag, positiveButton, negativeButton, singleChoiceItemsRes, messageRes, message)
 
-        open fun build() = AlertDialogFragment().apply {
-            putArgs(this@Arguments)
-        }
-
-        override fun writeToParcel(parcel: Parcel, flags: Int) {
-            parcel.writeString(dialogTag)
-            parcel.writeValue(positiveButton)
-            parcel.writeValue(negativeButton)
-            parcel.writeValue(singleChoiceItemsRes)
-            parcel.writeValue(messageRes)
-        }
-
-        override fun describeContents(): Int {
-            return 0
-        }
-
-        companion object CREATOR : Parcelable.Creator<Arguments> {
-            override fun createFromParcel(parcel: Parcel): Arguments {
-                return Arguments(parcel)
-            }
-
-            override fun newArray(size: Int): Array<Arguments?> {
-                return arrayOfNulls(size)
+        open fun build(): DialogFragment {
+            return AlertDialogFragment().apply {
+                putArgs(buildAlertArgs())
             }
         }
     }
 }
 
-fun AppCompatActivity.showAlert(tag: String, block: AlertDialogFragment.Arguments.() -> Unit) {
-    AlertDialogFragment.Arguments(tag)
+fun AppCompatActivity.showAlert(tag: String, block: AlertDialogFragment.AlertBuilder.() -> Unit) {
+    AlertDialogFragment.AlertBuilder(tag)
         .also(block)
         .build()
         .show(supportFragmentManager, tag)

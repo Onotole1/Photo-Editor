@@ -32,6 +32,10 @@ android {
     dataBinding {
         enabled true
     }
+
+    androidExtensions {
+        experimental true
+    }
 }
 
 dependencies {
@@ -42,6 +46,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$androidx_constraintlayout_version"
     implementation "androidx.recyclerview:recyclerview:$androidx_recyclerview_version"
     implementation "androidx.cardview:cardview:$androidx_cardview_version"
+    implementation "androidx.exifinterface:exifinterface:$androidx_exifinterface_version"
 
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
     implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"

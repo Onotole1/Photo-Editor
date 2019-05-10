@@ -5,6 +5,7 @@ import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
 import com.example.photoeditor.feature.main.domain.entity.SetImageRequest
 import com.example.photoeditor.feature.main.domain.entity.UriWithId
 import com.example.photoeditor.feature.main.domain.usecase.getbitmapfromuri.GetBitmapFromUri
+import com.example.photoeditor.feature.main.domain.usecase.getexif.GetExif
 import com.example.photoeditor.feature.main.domain.usecase.getresults.GetResults
 import com.example.photoeditor.feature.main.domain.usecase.removeresult.RemoveResult
 import com.example.photoeditor.feature.main.domain.usecase.setcontrollerimage.SetControllerImage
@@ -54,5 +55,8 @@ class UseCaseModule {
 
         @Binds
         fun provideSetControllerImage(setControllerImage: SetControllerImage): UseCaseCompletable<SetImageRequest>
+
+        @Binds
+        fun provideGetExif(getExif: GetExif): UseCase<@JvmSuppressWildcards Map<String, String>, Unit>
     }
 }

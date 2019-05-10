@@ -7,6 +7,7 @@
     <string name="item_controller_rotate_button_label">Rotate</string>
     <string name="item_controller_invert_colors_label">Invert colors</string>
     <string name="item_controller_mirror_image_label">Mirror image</string>
+    <string name="item_controller_exif_label">Exif</string>
     <string name="item_controller_select_image_label">Select image</string>
 
     <string name="download_image_dialog_hint">Enter image url</string>

@@ -27,6 +27,7 @@ class MainViewModel(
     private val invertBitmap: UseCase<State<Bitmap>, BitmapWithId>,
     private val removeResult: UseCaseCompletable<Long>,
     private val setControllerImage: UseCaseCompletable<SetImageRequest>,
+    private val getExif: UseCase<Map<String, String>, Unit>,
     getResults: UseCase<List<BitmapWithId>, Unit>
 ) : BaseViewModel(
     getBitmapFromUri,
@@ -64,6 +65,10 @@ class MainViewModel(
 
         bindingList[0] =
             ItemControllerBinding(controller.itemId, this@MainViewModel, controller.image, progress)
+    }
+
+    fun onExifClick() {
+        getExif.execute(exifObserver(), Unit)
     }
 
     fun downloadImageByUrl(url: String) {
@@ -109,6 +114,20 @@ class MainViewModel(
             setControllerImageObserver(bitmap),
             SetImageRequest(selectedItem.itemId, ITEM_CONTROLLER_ID)
         )
+    }
+
+    private fun exifObserver() = object : DefaultObserver<Map<String, String>>() {
+        override fun onNext(value: Map<String, String>) {
+            val exifInfo = value.entries.joinToString("\n") {
+                "${it.key}:${it.value}"
+            }
+
+            eventsDispatcher.dispatchEvent { showExifInfo(exifInfo) }
+        }
+
+        override fun onError(e: Throwable) {
+            eventsDispatcher.dispatchEvent { showError(e) }
+        }
     }
 
     private fun executeTransform(transform: UseCase<State<Bitmap>, BitmapWithId>, bitmap: Bitmap) {
@@ -204,5 +223,6 @@ class MainViewModel(
         fun showImagePickerDialog()
         fun showReplaceOrRemoveDialog()
         fun showError(throwable: Throwable)
+        fun showExifInfo(exif: String)
     }
 }
