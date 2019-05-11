@@ -16,6 +16,7 @@ import com.example.photoeditor.feature.main.presentation.viewmodel.MainViewModel
 import com.example.photoeditor.shared.domain.model.State
 import com.example.photoeditor.shared.domain.usecase.UseCase
 import com.example.photoeditor.shared.domain.usecase.UseCaseCompletable
+import com.example.photoeditor.shared.domain.usecase.UseCaseSingle
 import com.example.photoeditor.shared.presentation.viewmodel.EventsDispatcher
 import com.example.photoeditor.shared.presentation.viewmodel.ViewModelFactory
 import com.example.photoeditor.utils.databinding.adapter.BinderAdapter
@@ -39,8 +40,8 @@ class MainActivityModule {
         mirrorBitmap: UseCase<State<Bitmap>, BitmapWithId>,
         removeResult: UseCaseCompletable<Long>,
         setControllerImage: UseCaseCompletable<SetImageRequest>,
-        getExif: UseCase<Map<String, String>, Unit>,
-        getResults: UseCase<List<BitmapWithId>, Unit>
+        getExif: UseCaseSingle<Map<String, String>, Unit>,
+        getResults: UseCaseSingle<List<BitmapWithId>, Unit>
     ): MainViewModel = ViewModelFactory {
         MainViewModel(
             EventsDispatcher(),

@@ -39,7 +39,7 @@ abstract class TransformBitmapDelayed(
                         set(ExifInterface.TAG_MODEL, BuildConfig.APPLICATION_ID)
                     })
                     bitmap
-                }
+                }.toObservable()
             },
             BiFunction<Long, Bitmap, State<Bitmap>> { seconds: Long, bitmap: Bitmap ->
                 if (max == seconds) {

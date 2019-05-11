@@ -16,6 +16,7 @@ import com.example.photoeditor.shared.domain.model.State
 import com.example.photoeditor.shared.domain.usecase.RandomGenerator
 import com.example.photoeditor.shared.domain.usecase.UseCase
 import com.example.photoeditor.shared.domain.usecase.UseCaseCompletable
+import com.example.photoeditor.shared.domain.usecase.UseCaseSingle
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -48,7 +49,7 @@ class UseCaseModule {
         fun provideMirrorBitmap(mirrorBitmap: MirrorBitmap): UseCase<State<Bitmap>, BitmapWithId>
 
         @Binds
-        fun provideGetResults(getResults: GetResults): UseCase<List<@JvmSuppressWildcards BitmapWithId>, Unit>
+        fun provideGetResults(getResults: GetResults): UseCaseSingle<List<@JvmSuppressWildcards BitmapWithId>, Unit>
 
         @Binds
         fun provideRemoveResult(removeResult: RemoveResult): UseCaseCompletable<Long>
@@ -57,6 +58,6 @@ class UseCaseModule {
         fun provideSetControllerImage(setControllerImage: SetControllerImage): UseCaseCompletable<SetImageRequest>
 
         @Binds
-        fun provideGetExif(getExif: GetExif): UseCase<@JvmSuppressWildcards Map<String, String>, Unit>
+        fun provideGetExif(getExif: GetExif): UseCaseSingle<@JvmSuppressWildcards Map<String, String>, Unit>
     }
 }

@@ -2,7 +2,7 @@ package com.example.photoeditor.shared.domain.usecase
 
 import io.reactivex.observers.DisposableObserver
 
-abstract class DefaultObserver<T>: DisposableObserver<T>() {
+open class DefaultObserver<T>: DisposableObserver<T>() {
     override fun onComplete() {
         // do nothing
     }

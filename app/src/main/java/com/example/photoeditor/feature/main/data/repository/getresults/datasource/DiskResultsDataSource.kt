@@ -3,7 +3,7 @@ package com.example.photoeditor.feature.main.data.repository.getresults.datasour
 import com.example.photoeditor.feature.main.data.entity.ReqBitmapSize
 import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
 import com.example.photoeditor.utils.decodeSampledBitmapFromFile
-import io.reactivex.Observable
+import io.reactivex.Single
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Named
@@ -15,8 +15,8 @@ class DiskResultsDataSource @Inject constructor(
     private val controllerImagePath: File,
     private val reqBitmapSize: ReqBitmapSize
 ) : ResultsDataSource {
-    override fun getResults(): Observable<List<BitmapWithId>> {
-        return Observable.fromCallable {
+    override fun getResults(): Single<List<BitmapWithId>> {
+        return Single.fromCallable {
             val (reqWidth, reqHeight) = reqBitmapSize
 
             val controllerImage = controllerImagePath.listFiles().firstOrNull()?.let {

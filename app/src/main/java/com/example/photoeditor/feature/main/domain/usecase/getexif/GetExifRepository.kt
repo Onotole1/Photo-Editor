@@ -1,7 +1,7 @@
 package com.example.photoeditor.feature.main.domain.usecase.getexif
 
-import io.reactivex.Observable
+import io.reactivex.Single
 
 interface GetExifRepository {
-    fun getExif(): Observable<Map<String, String>>
+    fun getExif(): Single<Map<String, String>>
 }

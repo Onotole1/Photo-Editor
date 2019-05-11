@@ -2,12 +2,8 @@ package com.example.photoeditor.shared.domain.usecase
 
 import io.reactivex.observers.DisposableCompletableObserver
 
-abstract class DefaultCompletableObserver: DisposableCompletableObserver() {
+open class DefaultCompletableObserver: DisposableCompletableObserver() {
     override fun onComplete() {
-        // do nothing
-    }
-
-    override fun onStart() {
         // do nothing
     }
 

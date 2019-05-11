@@ -1,7 +1,7 @@
 package com.example.photoeditor.feature.main.data.repository.getexif.datasource
 
-import io.reactivex.Observable
+import io.reactivex.Single
 
 interface ExifDataSource {
-    fun getExif(): Observable<Map<String, String>>
+    fun getExif(): Single<Map<String, String>>
 }

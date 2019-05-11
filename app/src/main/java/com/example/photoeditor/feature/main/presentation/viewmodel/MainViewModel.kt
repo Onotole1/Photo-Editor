@@ -10,10 +10,7 @@ import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.Item
 import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.ItemProgressBinding
 import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.ItemResultBinding
 import com.example.photoeditor.shared.domain.model.State
-import com.example.photoeditor.shared.domain.usecase.DefaultCompletableObserver
-import com.example.photoeditor.shared.domain.usecase.DefaultObserver
-import com.example.photoeditor.shared.domain.usecase.UseCase
-import com.example.photoeditor.shared.domain.usecase.UseCaseCompletable
+import com.example.photoeditor.shared.domain.usecase.*
 import com.example.photoeditor.shared.presentation.viewmodel.BaseViewModel
 import com.example.photoeditor.shared.presentation.viewmodel.EventsDispatcher
 import com.example.photoeditor.shared.presentation.viewmodel.EventsDispatcherOwner
@@ -27,8 +24,8 @@ class MainViewModel(
     private val invertBitmap: UseCase<State<Bitmap>, BitmapWithId>,
     private val removeResult: UseCaseCompletable<Long>,
     private val setControllerImage: UseCaseCompletable<SetImageRequest>,
-    private val getExif: UseCase<Map<String, String>, Unit>,
-    getResults: UseCase<List<BitmapWithId>, Unit>
+    private val getExif: UseCaseSingle<Map<String, String>, Unit>,
+    getResults: UseCaseSingle<List<BitmapWithId>, Unit>
 ) : BaseViewModel(
     getBitmapFromUri,
     rotateBitmap,
@@ -116,8 +113,8 @@ class MainViewModel(
         )
     }
 
-    private fun exifObserver() = object : DefaultObserver<Map<String, String>>() {
-        override fun onNext(value: Map<String, String>) {
+    private fun exifObserver() = object : DefaultSingleObserver<Map<String, String>>() {
+        override fun onSuccess(value: Map<String, String>) {
             val exifInfo = value.entries.joinToString("\n") {
                 "${it.key}:${it.value}"
             }
@@ -186,8 +183,8 @@ class MainViewModel(
         }
     }
 
-    private fun resultsObserver() = object : DefaultObserver<List<BitmapWithId>>() {
-        override fun onNext(value: List<BitmapWithId>) {
+    private fun resultsObserver() = object : DefaultSingleObserver<List<BitmapWithId>>() {
+        override fun onSuccess(value: List<BitmapWithId>) {
             value.sortedBy {
                 it.imageId
             }.forEach {
