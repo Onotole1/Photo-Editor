@@ -1,1 +1,4 @@
 include ':app'
+
+apply from: 'app/dependencies_common_modules.gradle'
+common_dependencies.each { include ":common:$it" }

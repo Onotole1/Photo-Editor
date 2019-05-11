@@ -2,9 +2,9 @@ package com.example.photoeditor.feature.main.domain.usecase.getbitmapfromuri
 
 import android.graphics.Bitmap
 import com.example.photoeditor.feature.main.domain.entity.UriWithId
-import com.example.photoeditor.shared.domain.model.State
-import com.example.photoeditor.shared.domain.usecase.ExecutionThread
-import com.example.photoeditor.shared.domain.usecase.UseCase
+import com.spitchenko.domain.model.State
+import com.spitchenko.domain.usecase.ExecutionThread
+import com.spitchenko.domain.usecase.UseCase
 import io.reactivex.Observable
 import javax.inject.Inject
 import javax.inject.Named

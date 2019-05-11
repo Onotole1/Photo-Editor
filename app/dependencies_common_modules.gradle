@@ -1,0 +1,6 @@
+ext {
+    common_dependencies = [
+            'domain',
+            'presentation'
+    ]
+}

@@ -12,11 +12,11 @@ import com.example.photoeditor.feature.main.domain.usecase.setcontrollerimage.Se
 import com.example.photoeditor.feature.main.domain.usecase.transform.invertbitmap.InvertBitmap
 import com.example.photoeditor.feature.main.domain.usecase.transform.mirrorbitmap.MirrorBitmap
 import com.example.photoeditor.feature.main.domain.usecase.transform.rotatebitmap.RotateBitmap
-import com.example.photoeditor.shared.domain.model.State
-import com.example.photoeditor.shared.domain.usecase.RandomGenerator
-import com.example.photoeditor.shared.domain.usecase.UseCase
-import com.example.photoeditor.shared.domain.usecase.UseCaseCompletable
-import com.example.photoeditor.shared.domain.usecase.UseCaseSingle
+import com.spitchenko.domain.model.State
+import com.example.photoeditor.feature.main.domain.usecase.transform.RandomGenerator
+import com.spitchenko.domain.usecase.UseCase
+import com.spitchenko.domain.usecase.UseCaseCompletable
+import com.spitchenko.domain.usecase.UseCaseSingle
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -27,7 +27,8 @@ import kotlin.random.Random
 class UseCaseModule {
 
     @Provides
-    fun provideRandomGenerator(): RandomGenerator<Long> = object : RandomGenerator<Long> {
+    fun provideRandomGenerator(): RandomGenerator<Long> = object :
+        RandomGenerator<Long> {
         override fun generate(): Long = Random.nextLong(5, 30)
     }
 

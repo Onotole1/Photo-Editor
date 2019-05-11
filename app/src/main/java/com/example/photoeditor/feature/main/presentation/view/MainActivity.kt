@@ -13,15 +13,15 @@ import com.example.photoeditor.BR
 import com.example.photoeditor.R
 import com.example.photoeditor.databinding.ActivityMainBinding
 import com.example.photoeditor.feature.main.presentation.viewmodel.MainViewModel
-import com.example.photoeditor.shared.presentation.view.activity.BaseEventsActivity
-import com.example.photoeditor.shared.presentation.view.dialog.AlertDialogFragment
-import com.example.photoeditor.shared.presentation.view.dialog.EditTextAlertDialog
-import com.example.photoeditor.shared.presentation.view.dialog.showAlert
-import com.example.photoeditor.shared.presentation.view.dialog.showEditTextAlert
+import com.spitchenko.presentation.view.dialog.AlertDialogFragment
+import com.spitchenko.presentation.view.dialog.EditTextAlertDialog
+import com.spitchenko.presentation.view.dialog.showAlert
+import com.spitchenko.presentation.view.dialog.showEditTextAlert
 import com.example.photoeditor.utils.isPermissionGranted
 import com.example.photoeditor.utils.requestPermissions
 import com.example.photoeditor.utils.toUserFriendlyError
 import com.example.photoeditor.utils.toast
+import com.spitchenko.presentation.view.activity.BaseEventsActivity
 import java.io.File
 import javax.inject.Inject
 

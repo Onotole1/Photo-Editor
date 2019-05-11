@@ -1,9 +1,7 @@
 package com.example.photoeditor.feature.main.domain.usecase.getexif
 
-import com.example.photoeditor.shared.domain.usecase.ExecutionThread
-import com.example.photoeditor.shared.domain.usecase.UseCase
-import com.example.photoeditor.shared.domain.usecase.UseCaseSingle
-import io.reactivex.Observable
+import com.spitchenko.domain.usecase.ExecutionThread
+import com.spitchenko.domain.usecase.UseCaseSingle
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Named

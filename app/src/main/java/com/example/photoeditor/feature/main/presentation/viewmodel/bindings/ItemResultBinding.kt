@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.databinding.ViewDataBinding
 import com.example.photoeditor.BR
 import com.example.photoeditor.R
-import com.example.photoeditor.utils.databinding.adapter.BindingClass
+import com.spitchenko.presentation.viewmodel.binding.BindingClass
 
 class ItemResultBinding(
     override val itemId: Long,

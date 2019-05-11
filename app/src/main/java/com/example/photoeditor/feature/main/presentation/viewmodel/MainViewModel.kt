@@ -9,12 +9,12 @@ import com.example.photoeditor.feature.main.domain.entity.UriWithId
 import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.ItemControllerBinding
 import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.ItemProgressBinding
 import com.example.photoeditor.feature.main.presentation.viewmodel.bindings.ItemResultBinding
-import com.example.photoeditor.shared.domain.model.State
-import com.example.photoeditor.shared.domain.usecase.*
-import com.example.photoeditor.shared.presentation.viewmodel.BaseViewModel
-import com.example.photoeditor.shared.presentation.viewmodel.EventsDispatcher
-import com.example.photoeditor.shared.presentation.viewmodel.EventsDispatcherOwner
-import com.example.photoeditor.utils.databinding.adapter.BindingClass
+import com.spitchenko.domain.model.State
+import com.spitchenko.domain.usecase.*
+import com.spitchenko.presentation.viewmodel.BaseViewModel
+import com.spitchenko.presentation.viewmodel.EventsDispatcher
+import com.spitchenko.presentation.viewmodel.EventsDispatcherOwner
+import com.spitchenko.presentation.viewmodel.binding.BindingClass
 
 class MainViewModel(
     override val eventsDispatcher: EventsDispatcher<EventsListener>,

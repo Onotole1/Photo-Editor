@@ -3,7 +3,7 @@ package com.example.photoeditor.feature.main.presentation.viewmodel.bindings
 import androidx.databinding.ViewDataBinding
 import com.example.photoeditor.BR
 import com.example.photoeditor.R
-import com.example.photoeditor.utils.databinding.adapter.BindingClass
+import com.spitchenko.presentation.viewmodel.binding.BindingClass
 
 class ItemProgressBinding(
     override val itemId: Long,

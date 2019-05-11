@@ -5,7 +5,7 @@ import androidx.databinding.ViewDataBinding
 import com.example.photoeditor.BR
 import com.example.photoeditor.R
 import com.example.photoeditor.feature.main.presentation.viewmodel.MainViewModel
-import com.example.photoeditor.utils.databinding.adapter.BindingClass
+import com.spitchenko.presentation.viewmodel.binding.BindingClass
 
 class ItemControllerBinding(
     override val itemId: Long,

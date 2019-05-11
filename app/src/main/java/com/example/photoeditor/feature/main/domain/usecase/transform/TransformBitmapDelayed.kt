@@ -5,10 +5,9 @@ import androidx.exifinterface.media.ExifInterface
 import com.example.photoeditor.BuildConfig
 import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
 import com.example.photoeditor.feature.main.domain.usecase.getexif.GetExifRepository
-import com.example.photoeditor.shared.domain.model.State
-import com.example.photoeditor.shared.domain.usecase.ExecutionThread
-import com.example.photoeditor.shared.domain.usecase.RandomGenerator
-import com.example.photoeditor.shared.domain.usecase.UseCase
+import com.spitchenko.domain.model.State
+import com.spitchenko.domain.usecase.ExecutionThread
+import com.spitchenko.domain.usecase.UseCase
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import java.util.concurrent.TimeUnit

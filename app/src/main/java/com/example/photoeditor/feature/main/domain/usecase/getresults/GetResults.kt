@@ -1,10 +1,8 @@
 package com.example.photoeditor.feature.main.domain.usecase.getresults
 
 import com.example.photoeditor.feature.main.domain.entity.BitmapWithId
-import com.example.photoeditor.shared.domain.usecase.ExecutionThread
-import com.example.photoeditor.shared.domain.usecase.UseCase
-import com.example.photoeditor.shared.domain.usecase.UseCaseSingle
-import io.reactivex.Observable
+import com.spitchenko.domain.usecase.ExecutionThread
+import com.spitchenko.domain.usecase.UseCaseSingle
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Named

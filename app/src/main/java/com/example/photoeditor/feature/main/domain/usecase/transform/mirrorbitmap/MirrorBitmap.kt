@@ -4,8 +4,8 @@ import android.graphics.Bitmap
 import com.example.photoeditor.feature.main.domain.usecase.getexif.GetExifRepository
 import com.example.photoeditor.feature.main.domain.usecase.transform.TransformBitmapDelayed
 import com.example.photoeditor.feature.main.domain.usecase.transform.TransformReceiver
-import com.example.photoeditor.shared.domain.usecase.ExecutionThread
-import com.example.photoeditor.shared.domain.usecase.RandomGenerator
+import com.spitchenko.domain.usecase.ExecutionThread
+import com.example.photoeditor.feature.main.domain.usecase.transform.RandomGenerator
 import com.example.photoeditor.utils.FlipDirection
 import com.example.photoeditor.utils.flip
 import io.reactivex.Observable

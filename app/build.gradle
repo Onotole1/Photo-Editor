@@ -6,14 +6,12 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
-apply from: '../config_dependencies.gradle'
-
 android {
-    compileSdkVersion 28
+    compileSdkVersion compile_sdk
     defaultConfig {
         applicationId "com.example.photoeditor"
-        minSdkVersion 19
-        targetSdkVersion 28
+        minSdkVersion min_sdk
+        targetSdkVersion target_sdk
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -31,10 +29,6 @@ android {
 
     dataBinding {
         enabled true
-    }
-
-    androidExtensions {
-        experimental true
     }
 }
 
@@ -57,7 +51,10 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
-    testImplementation 'junit:junit:4.12'
+    apply from: 'dependencies_common_modules.gradle'
+    common_dependencies.each { implementation project(":common:$it") }
+
+    testImplementation "junit:junit:$junit_version"
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }

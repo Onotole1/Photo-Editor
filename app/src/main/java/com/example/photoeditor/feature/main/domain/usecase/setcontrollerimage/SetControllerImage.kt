@@ -1,8 +1,8 @@
 package com.example.photoeditor.feature.main.domain.usecase.setcontrollerimage
 
 import com.example.photoeditor.feature.main.domain.entity.SetImageRequest
-import com.example.photoeditor.shared.domain.usecase.ExecutionThread
-import com.example.photoeditor.shared.domain.usecase.UseCaseCompletable
+import com.spitchenko.domain.usecase.ExecutionThread
+import com.spitchenko.domain.usecase.UseCaseCompletable
 import io.reactivex.Completable
 import javax.inject.Inject
 import javax.inject.Named

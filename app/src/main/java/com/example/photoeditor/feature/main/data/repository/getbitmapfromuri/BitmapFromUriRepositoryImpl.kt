@@ -5,7 +5,7 @@ import android.webkit.URLUtil
 import com.example.photoeditor.feature.main.data.repository.getbitmapfromuri.datasource.BitmapDataSource
 import com.example.photoeditor.feature.main.domain.entity.UriWithId
 import com.example.photoeditor.feature.main.domain.usecase.getbitmapfromuri.BitmapFromUriRepository
-import com.example.photoeditor.shared.domain.model.State
+import com.spitchenko.domain.model.State
 import io.reactivex.Completable
 import io.reactivex.Observable
 import java.io.File

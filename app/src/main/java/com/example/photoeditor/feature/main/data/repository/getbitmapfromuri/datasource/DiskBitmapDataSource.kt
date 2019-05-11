@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import androidx.exifinterface.media.ExifInterface
 import com.example.photoeditor.feature.main.data.entity.ReqBitmapSize
 import com.example.photoeditor.feature.main.domain.entity.UriWithId
-import com.example.photoeditor.shared.domain.model.State
+import com.spitchenko.domain.model.State
 import com.example.photoeditor.utils.copyTo
 import com.example.photoeditor.utils.decodeSampledBitmapFromStream
 import com.example.photoeditor.utils.exif

@@ -1,6 +1,6 @@
 package com.example.photoeditor.core.dagger.module
 
-import com.example.photoeditor.shared.domain.usecase.ExecutionThread
+import com.spitchenko.domain.usecase.ExecutionThread
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Scheduler
