@@ -2,7 +2,7 @@ package com.spitchenko.photoeditor.core.dagger.module
 
 import com.spitchenko.photoeditor.feature.main.data.repository.getbitmapfromuri.BitmapFromUriRepositoryImpl
 import com.spitchenko.photoeditor.feature.main.data.repository.getexif.GetExifRepositoryImpl
-import com.spitchenko.photoeditor.feature.main.data.repository.getresults.GetresultsRepositoryImpl
+import com.spitchenko.photoeditor.feature.main.data.repository.getresults.GetResultsRepositoryImpl
 import com.spitchenko.photoeditor.feature.main.data.repository.removeresult.RemoveResultRepositoryImpl
 import com.spitchenko.photoeditor.feature.main.data.repository.setcontrollerimage.SetControllerImageRepositoryImpl
 import com.spitchenko.photoeditor.feature.main.data.repository.transform.receiver.TransformReceiverImpl
@@ -25,7 +25,7 @@ interface RepositoryModule {
         fun provideTransformRepository(transformRepository: TransformReceiverImpl): TransformReceiver
 
         @Binds
-        fun provideGetResultsRepository(getResultsRepository: GetresultsRepositoryImpl): GetResultsRepository
+        fun provideGetResultsRepository(getResultsRepository: GetResultsRepositoryImpl): GetResultsRepository
 
         @Binds
         fun provideRemoveResultRepository(removeResultRepository: RemoveResultRepositoryImpl): RemoveResultRepository

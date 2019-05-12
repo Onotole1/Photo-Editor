@@ -6,7 +6,7 @@ import com.spitchenko.photoeditor.feature.main.domain.usecase.getresults.GetResu
 import io.reactivex.Single
 import javax.inject.Inject
 
-class GetresultsRepositoryImpl @Inject constructor(
+class GetResultsRepositoryImpl @Inject constructor(
     private val diskResultsDataSource: ResultsDataSource
 ) : GetResultsRepository {
     override fun getResults(): Single<List<BitmapWithId>> {
