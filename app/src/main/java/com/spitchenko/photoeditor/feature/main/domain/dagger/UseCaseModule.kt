@@ -1,4 +1,4 @@
-package com.spitchenko.photoeditor.core.dagger.module
+package com.spitchenko.photoeditor.feature.main.domain.dagger
 
 import android.graphics.Bitmap
 import com.spitchenko.photoeditor.feature.main.domain.entity.BitmapWithId

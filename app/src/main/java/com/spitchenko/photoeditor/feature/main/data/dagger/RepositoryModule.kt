@@ -1,4 +1,4 @@
-package com.spitchenko.photoeditor.core.dagger.module
+package com.spitchenko.photoeditor.feature.main.data.dagger
 
 import com.spitchenko.photoeditor.feature.main.data.repository.getbitmapfromuri.BitmapFromUriRepositoryImpl
 import com.spitchenko.photoeditor.feature.main.data.repository.getexif.GetExifRepositoryImpl

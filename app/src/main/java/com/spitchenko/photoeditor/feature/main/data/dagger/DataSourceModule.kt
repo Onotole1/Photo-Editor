@@ -1,7 +1,9 @@
-package com.spitchenko.photoeditor.core.dagger.module
+package com.spitchenko.photoeditor.feature.main.data.dagger
 
 import android.content.ContentResolver
+import android.content.res.Resources
 import com.spitchenko.photoeditor.core.MainApplication
+import com.spitchenko.photoeditor.feature.main.data.entity.ReqBitmapSize
 import com.spitchenko.photoeditor.feature.main.data.repository.getbitmapfromuri.datasource.BitmapDataSource
 import com.spitchenko.photoeditor.feature.main.data.repository.getbitmapfromuri.datasource.DiskBitmapDataSource
 import com.spitchenko.photoeditor.feature.main.data.repository.getbitmapfromuri.datasource.NetworkBitmapDataSource
@@ -23,6 +25,12 @@ import javax.inject.Named
 
 @Module(includes = [DataSourceModule.BindsModule::class])
 class DataSourceModule {
+
+    @Provides
+    fun provideReqBitmapSize(): ReqBitmapSize {
+        val reqSize = Resources.getSystem().displayMetrics.widthPixels / 2
+        return ReqBitmapSize(reqSize, reqSize)
+    }
 
     @Provides
     fun provideContentResolver(context: MainApplication): ContentResolver = context.contentResolver

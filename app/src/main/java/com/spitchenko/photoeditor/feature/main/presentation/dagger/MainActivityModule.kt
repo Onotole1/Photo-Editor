@@ -1,4 +1,4 @@
-package com.spitchenko.photoeditor.feature.main.dagger
+package com.spitchenko.photoeditor.feature.main.presentation.dagger
 
 import android.graphics.Bitmap
 import android.view.ViewGroup
