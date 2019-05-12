@@ -7,6 +7,7 @@ import com.spitchenko.photoeditor.feature.main.domain.entity.UriWithId
 import com.spitchenko.domain.model.State
 import com.spitchenko.photoeditor.utils.copyTo
 import com.spitchenko.photoeditor.utils.decodeSampledBitmapFromFile
+import com.spitchenko.photoeditor.utils.saveToFile
 import io.reactivex.Observable
 import java.io.BufferedInputStream
 import java.io.File
@@ -73,6 +74,8 @@ class NetworkBitmapDataSource @Inject constructor(
 
                         val bitmap =
                             decodeSampledBitmapFromFile(imagePath, reqWidth, reqHeight)
+
+                        bitmap.saveToFile(imagePath)
 
                         ExifInterface(input).copyTo(imagePath.absolutePath)
 
