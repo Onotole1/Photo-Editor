@@ -3,6 +3,7 @@ package com.spitchenko.photoeditor.feature.main.presentation.view
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.webkit.URLUtil
@@ -13,17 +14,15 @@ import com.spitchenko.photoeditor.BR
 import com.spitchenko.photoeditor.R
 import com.spitchenko.photoeditor.databinding.ActivityMainBinding
 import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.MainViewModel
+import com.spitchenko.photoeditor.utils.*
+import com.spitchenko.presentation.view.activity.BaseEventsActivity
 import com.spitchenko.presentation.view.dialog.AlertDialogFragment
 import com.spitchenko.presentation.view.dialog.EditTextAlertDialog
 import com.spitchenko.presentation.view.dialog.showAlert
 import com.spitchenko.presentation.view.dialog.showEditTextAlert
-import com.spitchenko.photoeditor.utils.isPermissionGranted
-import com.spitchenko.photoeditor.utils.requestPermissions
-import com.spitchenko.photoeditor.utils.toUserFriendlyError
-import com.spitchenko.photoeditor.utils.toast
-import com.spitchenko.presentation.view.activity.BaseEventsActivity
 import java.io.File
 import javax.inject.Inject
+
 
 class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, MainViewModel.EventsListener>(),
     MainViewModel.EventsListener,
@@ -118,6 +117,11 @@ class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, Main
     }
 
     private fun startPicker(intent: Intent) {
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+            mPhotoPicUri.grantUriPermissionsForAllActivities(this, intent)
+        }
+
         intent.apply {
             putExtra(MediaStore.EXTRA_OUTPUT, mPhotoPicUri)
         }.also {

@@ -2,21 +2,25 @@
 
     <item android:id="@android:id/background">
         <shape>
-            <stroke android:color="@android:color/black" android:width="@dimen/material_corner"/>
+            <stroke
+                android:width="@dimen/material_corner"
+                android:color="@android:color/black" />
         </shape>
     </item>
 
-    <item android:id="@android:id/progress"
-          android:top="@dimen/progress_drawable_border"
-          android:bottom="@dimen/progress_drawable_border"
-          android:right="@dimen/progress_drawable_border"
-          android:left="@dimen/progress_drawable_border">
+    <item android:id="@android:id/progress">
         <clip>
-            <scale android:scaleWidth="100%">
-                <shape>
-                    <solid android:color="@color/color_accent"/>
-                </shape>
-            </scale>
+            <layer-list>
+                <item
+                    android:bottom="@dimen/progress_drawable_border"
+                    android:left="@dimen/progress_drawable_border"
+                    android:right="@dimen/progress_drawable_border"
+                    android:top="@dimen/progress_drawable_border">
+                    <shape>
+                        <solid android:color="@color/color_accent" />
+                    </shape>
+                </item>
+            </layer-list>
         </clip>
     </item>
 </layer-list>
