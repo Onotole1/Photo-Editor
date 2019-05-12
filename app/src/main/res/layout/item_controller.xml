@@ -5,7 +5,7 @@
 
     <data>
 
-        <import type="com.example.photoeditor.feature.main.presentation.viewmodel.MainViewModel" />
+        <import type="com.spitchenko.photoeditor.feature.main.presentation.viewmodel.MainViewModel" />
 
         <import type="android.graphics.Bitmap" />
 

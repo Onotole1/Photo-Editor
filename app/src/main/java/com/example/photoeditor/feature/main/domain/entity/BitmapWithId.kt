@@ -1,5 +1,0 @@
-package com.example.photoeditor.feature.main.domain.entity
-
-import android.graphics.Bitmap
-
-data class BitmapWithId(val imageId: Long, val source: Bitmap)
