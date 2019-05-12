@@ -53,10 +53,6 @@ open class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListen
             builder.setItems(it, this@AlertDialogFragment)
         }
 
-        args.messageRes?.also {
-            builder.setMessage(it)
-        }
-
         args.message?.also {
             builder.setMessage(it)
         }
@@ -87,7 +83,6 @@ open class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListen
         val positiveButton: Int? = null,
         val negativeButton: Int? = null,
         val singleChoiceItemsRes: Int? = null,
-        val messageRes: Int? = null,
         val message: String? = null
     ) : Parcelable
 
@@ -97,11 +92,10 @@ open class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListen
         var positiveButton: Int? = null
         var negativeButton: Int? = null
         var singleChoiceItemsRes: Int? = null
-        var messageRes: Int? = null
         var message: String? = null
 
         protected fun buildAlertArgs() =
-            Arguments(dialogTag, positiveButton, negativeButton, singleChoiceItemsRes, messageRes, message)
+            Arguments(dialogTag, positiveButton, negativeButton, singleChoiceItemsRes, message)
 
         open fun build(): DialogFragment {
             return AlertDialogFragment().apply {

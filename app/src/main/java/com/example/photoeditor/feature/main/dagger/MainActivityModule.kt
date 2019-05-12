@@ -17,10 +17,9 @@ import com.spitchenko.domain.model.State
 import com.spitchenko.domain.usecase.UseCase
 import com.spitchenko.domain.usecase.UseCaseCompletable
 import com.spitchenko.domain.usecase.UseCaseSingle
-import com.spitchenko.presentation.viewmodel.EventsDispatcher
-import com.spitchenko.presentation.viewmodel.ViewModelFactory
 import com.spitchenko.presentation.view.binding.adapter.BinderAdapter
 import com.spitchenko.presentation.view.binding.adapter.BindingViewHolder
+import com.spitchenko.presentation.viewmodel.ViewModelFactory
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -44,7 +43,6 @@ class MainActivityModule {
         getResults: UseCaseSingle<List<BitmapWithId>, Unit>
     ): MainViewModel = ViewModelFactory {
         MainViewModel(
-            EventsDispatcher(),
             getBitmapFromUri,
             rotateBitmap,
             mirrorBitmap,

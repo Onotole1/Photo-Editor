@@ -16,17 +16,18 @@ abstract class TransformBitmapDelayed(
     private val randomGenerator: RandomGenerator<Long>,
     private val receiver: TransformReceiver,
     private val repository: GetExifRepository,
+    private val timerThreadExecutor: ExecutionThread,
     workerThreadExecutor: ExecutionThread,
     postThreadExecutor: ExecutionThread
 ) : UseCase<State<Bitmap>, BitmapWithId>(workerThreadExecutor, postThreadExecutor) {
 
-    abstract fun bitmapSource(params: Bitmap): Observable<Bitmap>
+    protected abstract fun bitmapSource(params: Bitmap): Observable<Bitmap>
 
     override fun buildUseCaseObservable(params: BitmapWithId): Observable<State<Bitmap>> {
         val random = randomGenerator.generate()
         val max = random.dec()
 
-        val interval = Observable.interval(1, TimeUnit.SECONDS).take(random)
+        val interval = Observable.interval(1, TimeUnit.SECONDS, timerThreadExecutor.scheduler).take(random)
 
         return Observable.combineLatest(
             interval,

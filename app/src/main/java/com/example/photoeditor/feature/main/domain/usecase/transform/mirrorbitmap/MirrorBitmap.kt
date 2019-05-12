@@ -13,6 +13,8 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class MirrorBitmap @Inject constructor(
+    @Named("timer_execution_thread")
+    timerThreadExecutor: ExecutionThread,
     @Named("worker_execution_thread")
     workerThreadExecutor: ExecutionThread,
     @Named("post_execution_thread")
@@ -24,6 +26,7 @@ class MirrorBitmap @Inject constructor(
     randomGenerator,
     transformRepository,
     exifRepository,
+    timerThreadExecutor,
     workerThreadExecutor,
     postThreadExecutor
 ) {

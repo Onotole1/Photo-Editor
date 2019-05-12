@@ -17,7 +17,6 @@ import com.spitchenko.presentation.viewmodel.EventsDispatcherOwner
 import com.spitchenko.presentation.viewmodel.binding.BindingClass
 
 class MainViewModel(
-    override val eventsDispatcher: EventsDispatcher<EventsListener>,
     private val getBitmapFromUri: UseCase<State<Bitmap>, UriWithId>,
     private val rotateBitmap: UseCase<State<Bitmap>, BitmapWithId>,
     private val mirrorBitmap: UseCase<State<Bitmap>, BitmapWithId>,
@@ -36,6 +35,8 @@ class MainViewModel(
     getResults
 ),
     EventsDispatcherOwner<MainViewModel.EventsListener> {
+
+    override val eventsDispatcher: EventsDispatcher<EventsListener> = EventsDispatcher()
 
     private var selectedItemPosition: Int? = null
 

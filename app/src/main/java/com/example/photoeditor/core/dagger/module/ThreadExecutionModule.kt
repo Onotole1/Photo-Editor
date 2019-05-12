@@ -11,6 +11,12 @@ import javax.inject.Named
 @Module
 class ThreadExecutionModule {
 
+    @Named("timer_execution_thread")
+    @Provides
+    fun provideTimerExecutionThread(): ExecutionThread = object : ExecutionThread {
+        override val scheduler: Scheduler = Schedulers.computation()
+    }
+
     @Named("worker_execution_thread")
     @Provides
     fun provideWorkerExecutionThread(): ExecutionThread = object : ExecutionThread {
