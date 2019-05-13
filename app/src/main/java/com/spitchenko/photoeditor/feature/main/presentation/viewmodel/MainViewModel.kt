@@ -32,6 +32,7 @@ class MainViewModel(
     invertBitmap,
     removeResult,
     setControllerImage,
+    getExif,
     getResults
 ),
     EventsDispatcherOwner<MainViewModel.EventsListener> {
