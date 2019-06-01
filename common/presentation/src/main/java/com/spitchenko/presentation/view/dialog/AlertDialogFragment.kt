@@ -8,8 +8,8 @@ import android.os.Parcelable
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
-import com.spitchenko.presentation.view.fragment.getArgs
-import com.spitchenko.presentation.view.fragment.putArgs
+import com.spitchenko.presentation.view.arguments.getArgs
+import com.spitchenko.presentation.view.arguments.putArgs
 import kotlinx.android.parcel.Parcelize
 
 open class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListener {
@@ -37,7 +37,7 @@ open class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListen
     }
 
     open fun getArgs(): Arguments {
-        return arguments?.getArgs() ?: throw NullPointerException("Args must be set!")
+        return getArgs<Arguments>() ?: throw NullPointerException("Args must be set!")
     }
 
     open fun setupDialog(builder: AlertDialog.Builder, savedInstanceState: Bundle?) {
