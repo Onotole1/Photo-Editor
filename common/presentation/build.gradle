@@ -47,4 +47,6 @@ dependencies {
 
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.mockito:mockito-core:$mockito_version"
+
+    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 }
