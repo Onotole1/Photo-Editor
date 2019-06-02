@@ -10,34 +10,25 @@ import android.webkit.URLUtil
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import com.spitchenko.photoeditor.BR
 import com.spitchenko.photoeditor.R
-import com.spitchenko.photoeditor.databinding.ActivityMainBinding
 import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.MainViewModel
 import com.spitchenko.photoeditor.utils.*
-import com.spitchenko.presentation.view.activity.BaseEventsActivity
 import com.spitchenko.presentation.view.dialog.AlertDialogFragment
 import com.spitchenko.presentation.view.dialog.EditTextAlertDialog
 import com.spitchenko.presentation.view.dialog.showAlert
 import com.spitchenko.presentation.view.dialog.showEditTextAlert
+import dagger.android.support.DaggerAppCompatActivity
 import java.io.File
 import javax.inject.Inject
 
 
-class MainActivity : BaseEventsActivity<ActivityMainBinding, MainViewModel, MainViewModel.EventsListener>(),
+class MainActivity : DaggerAppCompatActivity(),
     MainViewModel.EventsListener,
     AlertDialogFragment.OnListItemClickListener,
     EditTextAlertDialog.EditTextDialogListener {
 
-    override val eventsListener: MainViewModel.EventsListener = this
-
-    override val viewModelVariableId: Int = BR.viewModel
-
     @Inject
-    override lateinit var viewModel: MainViewModel
-
-    @Inject
-    override lateinit var binding: ActivityMainBinding
+    lateinit var viewModel: MainViewModel
 
     private val mPhotoPicUri by lazy(LazyThreadSafetyMode.NONE) {
         FileProvider.getUriForFile(this, packageName, createPhotoFile())

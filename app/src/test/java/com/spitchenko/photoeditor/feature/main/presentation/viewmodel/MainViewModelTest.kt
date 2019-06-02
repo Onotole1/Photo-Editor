@@ -1,16 +1,19 @@
 package com.spitchenko.photoeditor.feature.main.presentation.viewmodel
 
 import android.graphics.Bitmap
-import com.spitchenko.photoeditor.feature.main.domain.entity.BitmapWithId
-import com.spitchenko.photoeditor.feature.main.domain.entity.SetImageRequest
-import com.spitchenko.photoeditor.feature.main.domain.entity.UriWithId
-import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.bindings.ItemControllerBinding
-import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.bindings.ItemResultBinding
+import androidx.databinding.ObservableArrayList
 import com.spitchenko.domain.model.State
 import com.spitchenko.domain.usecase.ExecutionThread
 import com.spitchenko.domain.usecase.UseCase
 import com.spitchenko.domain.usecase.UseCaseCompletable
 import com.spitchenko.domain.usecase.UseCaseSingle
+import com.spitchenko.photoeditor.feature.main.domain.entity.BitmapWithId
+import com.spitchenko.photoeditor.feature.main.domain.entity.SetImageRequest
+import com.spitchenko.photoeditor.feature.main.domain.entity.UriWithId
+import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.bindings.ItemControllerBinding
+import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.bindings.ItemResultBinding
+import com.spitchenko.presentation.viewmodel.EventsDispatcher
+import com.spitchenko.presentation.viewmodel.binding.BindingClass
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Scheduler
@@ -86,14 +89,20 @@ class MainViewModelTest {
     @Before
     fun setup() {
         viewModel = MainViewModel(
-            getBitmapFromUri,
-            transformUseCase,
-            transformUseCase,
-            transformUseCase,
-            removeResult,
-            setControllerImage,
-            getExif,
-            getResults
+            MainViewModelUseCases(
+                getBitmapFromUri,
+                transformUseCase,
+                transformUseCase,
+                transformUseCase,
+                removeResult,
+                setControllerImage,
+                getExif,
+                getResults
+            ),
+
+            EventsDispatcher(),
+
+            ObservableArrayList<BindingClass>()
         )
     }
 

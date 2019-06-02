@@ -2,59 +2,44 @@ package com.spitchenko.photoeditor.feature.main.presentation.viewmodel
 
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.databinding.ObservableArrayList
+import androidx.databinding.ObservableList
+import com.spitchenko.domain.model.State
+import com.spitchenko.domain.usecase.DefaultCompletableObserver
+import com.spitchenko.domain.usecase.DefaultObserver
+import com.spitchenko.domain.usecase.DefaultSingleObserver
+import com.spitchenko.domain.usecase.UseCase
 import com.spitchenko.photoeditor.feature.main.domain.entity.BitmapWithId
 import com.spitchenko.photoeditor.feature.main.domain.entity.SetImageRequest
 import com.spitchenko.photoeditor.feature.main.domain.entity.UriWithId
 import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.bindings.ItemControllerBinding
 import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.bindings.ItemProgressBinding
 import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.bindings.ItemResultBinding
-import com.spitchenko.domain.model.State
-import com.spitchenko.domain.usecase.*
 import com.spitchenko.presentation.viewmodel.BaseViewModel
 import com.spitchenko.presentation.viewmodel.EventsDispatcher
-import com.spitchenko.presentation.viewmodel.EventsDispatcherOwner
 import com.spitchenko.presentation.viewmodel.binding.BindingClass
 
 class MainViewModel(
-    private val getBitmapFromUri: UseCase<State<Bitmap>, UriWithId>,
-    private val rotateBitmap: UseCase<State<Bitmap>, BitmapWithId>,
-    private val mirrorBitmap: UseCase<State<Bitmap>, BitmapWithId>,
-    private val invertBitmap: UseCase<State<Bitmap>, BitmapWithId>,
-    private val removeResult: UseCaseCompletable<Long>,
-    private val setControllerImage: UseCaseCompletable<SetImageRequest>,
-    private val getExif: UseCaseSingle<Map<String, String>, Unit>,
-    getResults: UseCaseSingle<List<BitmapWithId>, Unit>
+    private val useCases: MainViewModelUseCases,
+    val eventsDispatcher: EventsDispatcher<EventsListener>,
+    val bindingList: ObservableList<BindingClass>
 ) : BaseViewModel(
-    getBitmapFromUri,
-    rotateBitmap,
-    mirrorBitmap,
-    invertBitmap,
-    removeResult,
-    setControllerImage,
-    getExif,
-    getResults
-),
-    EventsDispatcherOwner<MainViewModel.EventsListener> {
-
-    override val eventsDispatcher: EventsDispatcher<EventsListener> = EventsDispatcher()
+    useCases
+) {
 
     private var selectedItemPosition: Int? = null
-
-    val bindingList = ObservableArrayList<BindingClass>()
 
     init {
         bindingList.add(ItemControllerBinding(ITEM_CONTROLLER_ID, this))
 
-        getResults.execute(resultsObserver(), Unit)
+        useCases.getResults.execute(resultsObserver(), Unit)
     }
 
     fun setImage(uri: Uri) {
-        getBitmapFromUri.execute(bitmapDownloadObserver(), UriWithId(uri, ITEM_CONTROLLER_ID))
+        useCases.getBitmapFromUri.execute(bitmapDownloadObserver(), UriWithId(uri, ITEM_CONTROLLER_ID))
     }
 
     private fun updateControllerImage(bitmap: Bitmap) {
-        val controller = bindingList[0] ?: return
+        val controller = bindingList[0]
 
         bindingList[0] = ItemControllerBinding(controller.itemId, this@MainViewModel, bitmap)
     }
@@ -67,11 +52,11 @@ class MainViewModel(
     }
 
     fun onExifClick() {
-        getExif.execute(exifObserver(), Unit)
+        useCases.getExif.execute(exifObserver(), Unit)
     }
 
     fun downloadImageByUrl(url: String) {
-        getBitmapFromUri.execute(bitmapDownloadObserver(), UriWithId(Uri.parse(url), ITEM_CONTROLLER_ID))
+        useCases.getBitmapFromUri.execute(bitmapDownloadObserver(), UriWithId(Uri.parse(url), ITEM_CONTROLLER_ID))
     }
 
     fun onSelectImageClick() {
@@ -81,15 +66,15 @@ class MainViewModel(
     }
 
     fun onRotateClick(bitmap: Bitmap) {
-        executeTransform(rotateBitmap, bitmap)
+        executeTransform(useCases.rotateBitmap, bitmap)
     }
 
     fun onInvertColorsClick(bitmap: Bitmap) {
-        executeTransform(invertBitmap, bitmap)
+        executeTransform(useCases.invertBitmap, bitmap)
     }
 
     fun onMirrorImageClick(bitmap: Bitmap) {
-        executeTransform(mirrorBitmap, bitmap)
+        executeTransform(useCases.mirrorBitmap, bitmap)
     }
 
     fun onImageClick(itemPosition: Int) {
@@ -100,7 +85,7 @@ class MainViewModel(
     fun removeImage() {
         selectedItemPosition?.also {
             val itemId = bindingList[it].itemId
-            removeResult.execute(removeResultObserver(itemId), itemId)
+            useCases.removeResult.execute(removeResultObserver(itemId), itemId)
         }
     }
 
@@ -109,7 +94,7 @@ class MainViewModel(
 
         val bitmap = selectedItem.image ?: return
 
-        setControllerImage.execute(
+        useCases.setControllerImage.execute(
             setControllerImageObserver(bitmap),
             SetImageRequest(selectedItem.itemId, ITEM_CONTROLLER_ID)
         )
@@ -212,7 +197,6 @@ class MainViewModel(
             eventsDispatcher.dispatchEvent { showError(e) }
         }
     }
-
 
     private companion object {
         const val ITEM_CONTROLLER_ID = 0L

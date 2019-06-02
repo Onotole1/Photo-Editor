@@ -3,8 +3,13 @@ package com.spitchenko.photoeditor.feature.main.presentation.dagger
 import android.graphics.Bitmap
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.ObservableArrayList
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModelProvider
+import com.spitchenko.domain.model.State
+import com.spitchenko.domain.usecase.UseCase
+import com.spitchenko.domain.usecase.UseCaseCompletable
+import com.spitchenko.domain.usecase.UseCaseSingle
 import com.spitchenko.photoeditor.R
 import com.spitchenko.photoeditor.databinding.ActivityMainBinding
 import com.spitchenko.photoeditor.feature.main.domain.entity.BitmapWithId
@@ -13,13 +18,12 @@ import com.spitchenko.photoeditor.feature.main.domain.entity.UriWithId
 import com.spitchenko.photoeditor.feature.main.presentation.view.MainActivity
 import com.spitchenko.photoeditor.feature.main.presentation.view.adapter.TableDecoration
 import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.MainViewModel
-import com.spitchenko.domain.model.State
-import com.spitchenko.domain.usecase.UseCase
-import com.spitchenko.domain.usecase.UseCaseCompletable
-import com.spitchenko.domain.usecase.UseCaseSingle
+import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.MainViewModelUseCases
 import com.spitchenko.presentation.view.binding.adapter.BinderAdapter
 import com.spitchenko.presentation.view.binding.adapter.BindingViewHolder
+import com.spitchenko.presentation.viewmodel.EventsDispatcher
 import com.spitchenko.presentation.viewmodel.ViewModelFactory
+import com.spitchenko.presentation.viewmodel.binding.BindingClass
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -41,29 +45,47 @@ class MainActivityModule {
         setControllerImage: UseCaseCompletable<SetImageRequest>,
         getExif: UseCaseSingle<Map<String, String>, Unit>,
         getResults: UseCaseSingle<List<BitmapWithId>, Unit>
-    ): MainViewModel = ViewModelFactory {
-        MainViewModel(
-            getBitmapFromUri,
-            rotateBitmap,
-            mirrorBitmap,
-            invertBitmap,
-            removeResult,
-            setControllerImage,
-            getExif,
-            getResults
-        )
-    }.let {
-        ViewModelProvider(context, it)[MainViewModel::class.java]
+    ): MainViewModel {
+
+        return ViewModelFactory {
+
+            MainViewModel(
+                MainViewModelUseCases(
+                    getBitmapFromUri,
+                    rotateBitmap,
+                    mirrorBitmap,
+                    invertBitmap,
+                    removeResult,
+                    setControllerImage,
+                    getExif,
+                    getResults
+                ),
+
+                EventsDispatcher(),
+
+                ObservableArrayList<BindingClass>()
+            )
+        }.let {
+            ViewModelProvider(context, it)[MainViewModel::class.java]
+        }.also {
+            createBinding(context, it)
+        }
     }
 
-    @Provides
-    fun provideBinding(context: MainActivity, viewModel: MainViewModel): ActivityMainBinding {
+    private fun createBinding(
+        context: MainActivity,
+        viewModel: MainViewModel
+    ): ActivityMainBinding {
         return DataBindingUtil.setContentView<ActivityMainBinding>(context, R.layout.activity_main).apply {
             activityMainRecyclerView.apply {
                 adapter = createAdapter(context, viewModel)
 
                 addItemDecoration(TableDecoration(context))
             }
+
+            viewModel.eventsDispatcher.bind(context, context)
+
+            bindingList = viewModel.bindingList
         }
     }
 

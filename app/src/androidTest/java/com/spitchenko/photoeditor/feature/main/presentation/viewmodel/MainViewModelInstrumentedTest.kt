@@ -2,6 +2,7 @@ package com.spitchenko.photoeditor.feature.main.presentation.viewmodel
 
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.databinding.ObservableArrayList
 import com.spitchenko.photoeditor.feature.main.domain.entity.BitmapWithId
 import com.spitchenko.photoeditor.feature.main.domain.entity.SetImageRequest
 import com.spitchenko.photoeditor.feature.main.domain.entity.UriWithId
@@ -12,6 +13,8 @@ import com.spitchenko.domain.usecase.ExecutionThread
 import com.spitchenko.domain.usecase.UseCase
 import com.spitchenko.domain.usecase.UseCaseCompletable
 import com.spitchenko.domain.usecase.UseCaseSingle
+import com.spitchenko.presentation.viewmodel.EventsDispatcher
+import com.spitchenko.presentation.viewmodel.binding.BindingClass
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Scheduler
@@ -78,6 +81,8 @@ class MainViewModelInstrumentedTest {
 
     private val testBitmap = Bitmap.createBitmap(100, 50, Bitmap.Config.ARGB_8888)
 
+    private val testDispatcher = EventsDispatcher<MainViewModel.EventsListener>()
+
     @Test
     fun transform_use_case_test() {
 
@@ -90,14 +95,20 @@ class MainViewModelInstrumentedTest {
         }
 
         val viewModel = MainViewModel(
-            getBitmapFromUri,
-            transformUseCase,
-            transformUseCase,
-            transformUseCase,
-            removeResult,
-            setControllerImage,
-            getExif,
-            getResults
+            MainViewModelUseCases(
+                getBitmapFromUri,
+                transformUseCase,
+                transformUseCase,
+                transformUseCase,
+                removeResult,
+                setControllerImage,
+                getExif,
+                getResults
+            ),
+
+            testDispatcher,
+
+            ObservableArrayList<BindingClass>()
         )
 
         val inputBitmap = Bitmap.createBitmap(50, 100, Bitmap.Config.ARGB_8888)
@@ -123,14 +134,20 @@ class MainViewModelInstrumentedTest {
         }
 
         val viewModel = MainViewModel(
-            getBitmapFromUri,
-            transformUseCase,
-            transformUseCase,
-            transformUseCase,
-            removeResult,
-            setControllerImage,
-            getExif,
-            getResults
+            MainViewModelUseCases(
+                getBitmapFromUri,
+                transformUseCase,
+                transformUseCase,
+                transformUseCase,
+                removeResult,
+                setControllerImage,
+                getExif,
+                getResults
+            ),
+
+            testDispatcher,
+
+            ObservableArrayList<BindingClass>()
         )
 
         viewModel.setImage(testUri)
@@ -146,14 +163,20 @@ class MainViewModelInstrumentedTest {
     fun replace_existing_image_use_case_test() {
 
         val viewModel = MainViewModel(
-            getBitmapFromUri,
-            transformUseCase,
-            transformUseCase,
-            transformUseCase,
-            removeResult,
-            setControllerImage,
-            getExif,
-            getResults
+            MainViewModelUseCases(
+                getBitmapFromUri,
+                transformUseCase,
+                transformUseCase,
+                transformUseCase,
+                removeResult,
+                setControllerImage,
+                getExif,
+                getResults
+            ),
+
+            testDispatcher,
+
+            ObservableArrayList<BindingClass>()
         )
 
         val testResultId = 1L

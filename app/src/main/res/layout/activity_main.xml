@@ -5,11 +5,13 @@
 
     <data>
 
-        <import type="com.spitchenko.photoeditor.feature.main.presentation.viewmodel.MainViewModel" />
+        <import type="com.spitchenko.presentation.viewmodel.binding.BindingClass" />
+
+        <import type="androidx.databinding.ObservableList" />
 
         <variable
-            name="viewModel"
-            type="MainViewModel" />
+            name="bindingList"
+            type="ObservableList&lt;BindingClass>" />
     </data>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -18,7 +20,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingBottom="@dimen/material_padding_medium"
-        app:bindingList="@{viewModel.bindingList}"
+        app:bindingList="@{bindingList}"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:context=".feature.main.presentation.view.MainActivity"
         tools:listitem="@layout/item_controller" />
