@@ -2,24 +2,15 @@ package com.spitchenko.presentation.viewmodel.binding
 
 import androidx.databinding.ViewDataBinding
 
+interface BindingClass {
 
-abstract class BindingClass {
+    val layoutId: Int
 
-    abstract val layoutId: Int
+    val itemId: Long
 
-    abstract val itemId: Long
+    fun areContentsTheSame(other: Any?): Boolean
 
-    abstract fun areContentsTheSame(other: Any?): Boolean
+    fun areItemsTheSame(other: Any?): Boolean = (this as? BindingClass)?.itemId == itemId
 
-    open fun areItemsTheSame(other: Any?): Boolean = this == other
-
-    abstract fun bind(viewDataBinding: ViewDataBinding)
-
-    override fun equals(other: Any?): Boolean {
-        return other is BindingClass && other.itemId == itemId
-    }
-
-    override fun hashCode(): Int {
-        return (itemId * 31).toInt()
-    }
+    fun bind(viewDataBinding: ViewDataBinding)
 }

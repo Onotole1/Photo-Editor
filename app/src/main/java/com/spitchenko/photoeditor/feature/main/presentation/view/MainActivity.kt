@@ -166,7 +166,7 @@ class MainActivity : DaggerAppCompatActivity(),
         }
     }
 
-    private fun checkPermissionResult(
+    private inline fun checkPermissionResult(
         permissionsResults: Map<String, Int>,
         permission: String,
         @StringRes explanation: Int,

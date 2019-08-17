@@ -8,7 +8,7 @@ import com.spitchenko.presentation.viewmodel.binding.BindingClass
 class ItemProgressBinding(
     override val itemId: Long,
     val progress: Int = 0
-) : BindingClass() {
+) : BindingClass {
     override val layoutId: Int = R.layout.item_progress
 
     override fun areContentsTheSame(other: Any?): Boolean {

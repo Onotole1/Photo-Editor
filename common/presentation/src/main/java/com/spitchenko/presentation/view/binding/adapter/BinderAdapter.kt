@@ -8,23 +8,21 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.spitchenko.presentation.viewmodel.binding.BindingClass
 
-open class BinderAdapter(private val mLifecycleOwner: LifecycleOwner? = null) : RecyclerView.Adapter<BindingViewHolder<ViewDataBinding>>() {
+open class BinderAdapter(private val mLifecycleOwner: LifecycleOwner? = null) :
+    RecyclerView.Adapter<BindingViewHolder<ViewDataBinding>>() {
     var itemList: List<BindingClass> = emptyList()
         private set
 
-    override fun getItemCount(): Int {
-        return itemList.size
-    }
+    override fun getItemCount(): Int = itemList.size
 
-    override fun getItemViewType(position: Int): Int {
-        return itemList.getOrNull(position)?.layoutId ?: super.getItemViewType(position)
-    }
+    override fun getItemViewType(position: Int): Int =
+        itemList.getOrNull(position)?.layoutId ?: super.getItemViewType(position)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingViewHolder<ViewDataBinding> {
         val viewHolder = BindingViewHolder<ViewDataBinding>(parent, viewType)
-        if (mLifecycleOwner != null) {
-            viewHolder.binding.lifecycleOwner = mLifecycleOwner
-        }
+
+        viewHolder.binding.lifecycleOwner = mLifecycleOwner
+
         return viewHolder
     }
 

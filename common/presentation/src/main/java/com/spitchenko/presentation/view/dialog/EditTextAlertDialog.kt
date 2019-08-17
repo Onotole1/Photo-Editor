@@ -43,12 +43,11 @@ open class EditTextAlertDialog : AlertDialogFragment() {
         }
     }
 
-    override fun getArgs(): Arguments {
-        return (getArgs<EditTextArguments>() ?: throw NullPointerException("Args must be set!")).let {
+    override fun getArgs(): Arguments =
+        (getArgs<EditTextArguments>() ?: throw NullPointerException("Args must be set!")).let {
             args = it
             it.alertArguments
         }
-    }
 
     override fun onDialogButtonPressed(which: Int) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
@@ -89,7 +88,10 @@ open class EditTextAlertDialog : AlertDialogFragment() {
     }
 }
 
-fun AppCompatActivity.showEditTextAlert(tag: String, block: EditTextAlertDialog.EditTextAlertBuilder.() -> Unit) {
+inline fun AppCompatActivity.showEditTextAlert(
+    tag: String,
+    block: EditTextAlertDialog.EditTextAlertBuilder.() -> Unit
+) {
     EditTextAlertDialog.EditTextAlertBuilder(tag)
         .also(block)
         .build()

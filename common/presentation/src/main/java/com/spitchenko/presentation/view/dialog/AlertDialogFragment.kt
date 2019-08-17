@@ -36,9 +36,9 @@ open class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListen
         }.create()
     }
 
-    open fun getArgs(): Arguments {
-        return getArgs<Arguments>() ?: throw NullPointerException("Args must be set!")
-    }
+    open fun getArgs(): Arguments =
+        getArgs<Arguments>() ?: throw NullPointerException("Args must be set!")
+
 
     open fun setupDialog(builder: AlertDialog.Builder, savedInstanceState: Bundle?) {
         args.positiveButton?.also {
@@ -67,7 +67,7 @@ open class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListen
         }
     }
 
-    open fun onDialogButtonPressed(which: Int) {}
+    open fun onDialogButtonPressed(which: Int) = Unit
 
     interface OnDialogButtonPressedListener {
         fun onDialogButtonPressed(dialogTag: String, dialog: AlertDialogFragment, buttonId: Int)
@@ -105,7 +105,7 @@ open class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListen
     }
 }
 
-fun AppCompatActivity.showAlert(tag: String, block: AlertDialogFragment.AlertBuilder.() -> Unit) {
+inline fun AppCompatActivity.showAlert(tag: String, block: AlertDialogFragment.AlertBuilder.() -> Unit) {
     AlertDialogFragment.AlertBuilder(tag)
         .also(block)
         .build()

@@ -9,7 +9,7 @@ import com.spitchenko.presentation.viewmodel.binding.BindingClass
 class ItemResultBinding(
     override val itemId: Long,
     val image: Bitmap? = null
-) : BindingClass() {
+) : BindingClass {
     override val layoutId: Int = R.layout.item_result
 
     override fun areContentsTheSame(other: Any?): Boolean {

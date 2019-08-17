@@ -5,20 +5,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.spitchenko.presentation.viewmodel.binding.BindingClass
 
-object RecyclerViewAdapters {
+@BindingAdapter("bindingList")
+fun RecyclerView.setBindingList(bindingList: List<BindingClass>?) {
+    val bindingAdapter = adapter as? BinderAdapter ?: return
 
-    @JvmStatic
-    @BindingAdapter("bindingList")
-    fun RecyclerView.setBindingList(bindingList: List<BindingClass>?) {
-        val bindingAdapter = adapter as? BinderAdapter ?: return
+    val newList = bindingList.orEmpty()
 
-        val newList = bindingList.orEmpty()
-
-        val result = DiffUtilCallback(bindingAdapter.itemList, newList)
-            .let {
+    val result = DiffUtilCallback(bindingAdapter.itemList, newList)
+        .let {
             DiffUtil.calculateDiff(it)
         }
 
-        bindingAdapter.setItems(result, newList.toList())
-    }
+    bindingAdapter.setItems(result, newList.toList())
 }

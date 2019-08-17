@@ -12,7 +12,7 @@ class ItemControllerBinding(
     private val viewModel: MainViewModel,
     val image: Bitmap? = null,
     val progress: Int? = null
-) : BindingClass() {
+) : BindingClass {
     override val layoutId: Int = R.layout.item_controller
 
     override fun areContentsTheSame(other: Any?): Boolean {

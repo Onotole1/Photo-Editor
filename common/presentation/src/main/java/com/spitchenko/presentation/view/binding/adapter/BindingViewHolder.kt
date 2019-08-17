@@ -7,8 +7,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 
-class BindingViewHolder<T : ViewDataBinding>(val binding: T) : RecyclerView.ViewHolder(binding.root) {
-
-    constructor(parent: ViewGroup, @LayoutRes mLayout: Int):
-            this(DataBindingUtil.inflate<T>(LayoutInflater.from(parent.context), mLayout, parent, false))
-}
+class BindingViewHolder<T : ViewDataBinding>(
+    parent: ViewGroup,
+    @LayoutRes layout: Int,
+    val binding: T = DataBindingUtil.inflate(LayoutInflater.from(parent.context), layout, parent, false)
+) : RecyclerView.ViewHolder(binding.root)
