@@ -48,9 +48,7 @@ class MainActivity : DaggerAppCompatActivity(),
         }
     }
 
-    override fun showError(throwable: Throwable) {
-        toast(throwable.toUserFriendlyError(this))
-    }
+    override fun showError(throwable: Throwable) = toast(throwable.toUserFriendlyError(this))
 
     override fun onListItemClick(dialogTag: String, dialog: AlertDialogFragment, position: Int) {
         if (dialogTag == PICKER_IMAGE_DIALOG) {
@@ -99,13 +97,9 @@ class MainActivity : DaggerAppCompatActivity(),
         }
     }
 
-    private fun startCamera() {
-        startPicker(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
-    }
+    private fun startCamera() = startPicker(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
 
-    private fun startGallery() {
-        startPicker(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
-    }
+    private fun startGallery() = startPicker(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
 
     private fun startPicker(intent: Intent) {
 
@@ -151,12 +145,11 @@ class MainActivity : DaggerAppCompatActivity(),
         }
     }
 
-    override fun showReplaceOrRemoveDialog() {
+    override fun showReplaceOrRemoveDialog() =
         showAlert(REPLACE_OR_REMOVE_IMAGE_DIALOG) {
             negativeButton = android.R.string.cancel
             singleChoiceItemsRes = R.array.replace_or_remove_dialog
         }
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

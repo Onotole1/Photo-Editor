@@ -34,9 +34,8 @@ class MainViewModel(
         useCases.getResults.execute(resultsObserver(), Unit)
     }
 
-    fun setImage(uri: Uri) {
+    fun setImage(uri: Uri) =
         useCases.getBitmapFromUri.execute(bitmapDownloadObserver(), UriWithId(uri, ITEM_CONTROLLER_ID))
-    }
 
     private fun updateControllerImage(bitmap: Bitmap) {
         val controller = bindingList[0]
@@ -51,43 +50,31 @@ class MainViewModel(
             ItemControllerBinding(controller.itemId, this@MainViewModel, controller.image, progress)
     }
 
-    fun onExifClick() {
-        useCases.getExif.execute(exifObserver(), Unit)
-    }
+    fun onExifClick() = useCases.getExif.execute(exifObserver(), Unit)
 
-    fun downloadImageByUrl(url: String) {
+    fun downloadImageByUrl(url: String) =
         useCases.getBitmapFromUri.execute(bitmapDownloadObserver(), UriWithId(Uri.parse(url), ITEM_CONTROLLER_ID))
+
+    fun onSelectImageClick() = eventsDispatcher.dispatchEvent {
+        showImagePickerDialog()
     }
 
-    fun onSelectImageClick() {
-        eventsDispatcher.dispatchEvent {
-            showImagePickerDialog()
-        }
-    }
+    fun onRotateClick(bitmap: Bitmap) = executeTransform(useCases.rotateBitmap, bitmap)
 
-    fun onRotateClick(bitmap: Bitmap) {
-        executeTransform(useCases.rotateBitmap, bitmap)
-    }
+    fun onInvertColorsClick(bitmap: Bitmap) = executeTransform(useCases.invertBitmap, bitmap)
 
-    fun onInvertColorsClick(bitmap: Bitmap) {
-        executeTransform(useCases.invertBitmap, bitmap)
-    }
-
-    fun onMirrorImageClick(bitmap: Bitmap) {
-        executeTransform(useCases.mirrorBitmap, bitmap)
-    }
+    fun onMirrorImageClick(bitmap: Bitmap) = executeTransform(useCases.mirrorBitmap, bitmap)
 
     fun onImageClick(itemPosition: Int) {
         selectedItemPosition = itemPosition
         eventsDispatcher.dispatchEvent { showReplaceOrRemoveDialog() }
     }
 
-    fun removeImage() {
+    fun removeImage() =
         selectedItemPosition?.also {
             val itemId = bindingList[it].itemId
             useCases.removeResult.execute(removeResultObserver(itemId), itemId)
         }
-    }
 
     fun replaceExistingImage() {
         val selectedItem = bindingList.getOrNull(selectedItemPosition ?: return) as ItemResultBinding

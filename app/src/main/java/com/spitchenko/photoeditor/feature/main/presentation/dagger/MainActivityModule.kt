@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.ViewModelProvider
 import com.spitchenko.domain.model.State
 import com.spitchenko.domain.usecase.UseCase
 import com.spitchenko.domain.usecase.UseCaseCompletable
@@ -19,11 +18,10 @@ import com.spitchenko.photoeditor.feature.main.presentation.view.MainActivity
 import com.spitchenko.photoeditor.feature.main.presentation.view.adapter.TableDecoration
 import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.MainViewModel
 import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.MainViewModelUseCases
+import com.spitchenko.presentation.view.activity.getViewModel
 import com.spitchenko.presentation.view.binding.adapter.BinderAdapter
 import com.spitchenko.presentation.view.binding.adapter.BindingViewHolder
 import com.spitchenko.presentation.viewmodel.EventsDispatcher
-import com.spitchenko.presentation.viewmodel.ViewModelFactory
-import com.spitchenko.presentation.viewmodel.binding.BindingClass
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -47,8 +45,7 @@ class MainActivityModule {
         getResults: UseCaseSingle<List<BitmapWithId>, Unit>
     ): MainViewModel {
 
-        return ViewModelFactory {
-
+        return context.getViewModel {
             MainViewModel(
                 MainViewModelUseCases(
                     getBitmapFromUri,
@@ -63,10 +60,8 @@ class MainActivityModule {
 
                 EventsDispatcher(),
 
-                ObservableArrayList<BindingClass>()
+                ObservableArrayList()
             )
-        }.let {
-            ViewModelProvider(context, it)[MainViewModel::class.java]
         }.also {
             createBinding(context, it)
         }

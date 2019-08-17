@@ -97,17 +97,14 @@ open class AlertDialogFragment : DialogFragment(), DialogInterface.OnClickListen
         protected fun buildAlertArgs() =
             Arguments(dialogTag, positiveButton, negativeButton, singleChoiceItemsRes, message)
 
-        open fun build(): DialogFragment {
-            return AlertDialogFragment().apply {
-                putArgs(buildAlertArgs())
-            }
+        open fun build(): DialogFragment = AlertDialogFragment().apply {
+            putArgs(buildAlertArgs())
         }
     }
 }
 
-inline fun AppCompatActivity.showAlert(tag: String, block: AlertDialogFragment.AlertBuilder.() -> Unit) {
+inline fun AppCompatActivity.showAlert(tag: String, block: AlertDialogFragment.AlertBuilder.() -> Unit) =
     AlertDialogFragment.AlertBuilder(tag)
         .also(block)
         .build()
         .show(supportFragmentManager, tag)
-}

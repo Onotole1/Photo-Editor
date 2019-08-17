@@ -36,12 +36,11 @@ open class EditTextAlertDialog : AlertDialogFragment() {
         builder.setView(editText)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return super.onCreateDialog(savedInstanceState).also {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        super.onCreateDialog(savedInstanceState).also {
 
             it.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         }
-    }
 
     override fun getArgs(): Arguments =
         (getArgs<EditTextArguments>() ?: throw NullPointerException("Args must be set!")).let {
@@ -91,9 +90,7 @@ open class EditTextAlertDialog : AlertDialogFragment() {
 inline fun AppCompatActivity.showEditTextAlert(
     tag: String,
     block: EditTextAlertDialog.EditTextAlertBuilder.() -> Unit
-) {
-    EditTextAlertDialog.EditTextAlertBuilder(tag)
-        .also(block)
-        .build()
-        .show(supportFragmentManager, tag)
-}
+) = EditTextAlertDialog.EditTextAlertBuilder(tag)
+    .also(block)
+    .build()
+    .show(supportFragmentManager, tag)
