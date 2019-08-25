@@ -4,6 +4,7 @@ import com.spitchenko.photoeditor.feature.main.domain.entity.SetImageRequest
 import com.spitchenko.photoeditor.utils.copyTo
 import com.spitchenko.photoeditor.utils.exif
 import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Named
@@ -13,10 +14,10 @@ class DiskSetControllerImageSource @Inject constructor(
     private val imageControllerPath: File,
     @Named("images_dir_result")
     private val imagesDirResult: File
-    ): SetControllerImageSource {
+) : SetControllerImageSource {
 
-    override fun setControllerImage(request: SetImageRequest): Completable {
-        return Completable.fromCallable {
+    override fun setControllerImage(request: SetImageRequest): Completable =
+        Completable.fromCallable {
             imageControllerPath.listFiles()?.forEach {
                 it.delete()
             }
@@ -27,6 +28,5 @@ class DiskSetControllerImageSource @Inject constructor(
             sourceFile.copyTo(destinationFile)
 
             sourceFile.exif().copyTo(destinationFile.exif())
-        }
-    }
+        }.subscribeOn(Schedulers.io())
 }

@@ -9,7 +9,6 @@ class RemoveResultRepositoryImpl @Inject constructor(
     private val diskRemoveResultSource: RemoveResultSource
 ) : RemoveResultRepository {
 
-    override fun removeResult(imageId: Long): Completable {
-        return diskRemoveResultSource.removeResult(imageId)
-    }
+    override fun removeResult(imageId: Long): Completable =
+        diskRemoveResultSource.removeResult(imageId)
 }

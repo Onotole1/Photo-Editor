@@ -6,7 +6,6 @@ import dagger.android.support.AndroidSupportInjectionModule
 @Module(
     includes = [
         AndroidSupportInjectionModule::class,
-        ThreadExecutionModule::class,
         MainFeatureModule::class
     ]
 )

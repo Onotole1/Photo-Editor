@@ -12,6 +12,7 @@ class DiskBitmapSaver @Inject constructor(
     @Named("images_dir_result")
     private val imagesPath: File
 ): TransformSaver {
+
     override fun saveBitmap(params: BitmapWithId, exif: Map<String, String>) {
         val outputFile = File(imagesPath, params.imageId.toString())
 

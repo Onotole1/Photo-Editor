@@ -2,13 +2,14 @@ package com.spitchenko.photoeditor.feature.main.data.repository.getbitmapfromuri
 
 import android.graphics.Bitmap
 import androidx.exifinterface.media.ExifInterface
+import com.spitchenko.domain.model.State
 import com.spitchenko.photoeditor.feature.main.data.entity.ReqBitmapSize
 import com.spitchenko.photoeditor.feature.main.domain.entity.UriWithId
-import com.spitchenko.domain.model.State
 import com.spitchenko.photoeditor.utils.copyTo
 import com.spitchenko.photoeditor.utils.decodeSampledBitmapFromFile
 import com.spitchenko.photoeditor.utils.saveToFile
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -22,8 +23,9 @@ class NetworkBitmapDataSource @Inject constructor(
     @Named("controller_image_dir")
     private val imagesPath: File
 ) : BitmapDataSource {
-    override fun getBitmapFromUrl(uriWithId: UriWithId): Observable<State<Bitmap>> {
-        return Observable.create { emitter ->
+
+    override fun getBitmapFromUrl(uriWithId: UriWithId): Observable<State<Bitmap>> =
+        Observable.create<State<Bitmap>> { emitter ->
 
             val imagePath = File(imagesPath, uriWithId.itemId.toString())
 
@@ -93,8 +95,7 @@ class NetworkBitmapDataSource @Inject constructor(
             } finally {
                 connection?.disconnect()
             }
-        }
-    }
+        }.subscribeOn(Schedulers.io())
 
     private companion object {
         const val BUFFER_SIZE_BYTES = 8192

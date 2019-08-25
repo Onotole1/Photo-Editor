@@ -8,7 +8,6 @@ import javax.inject.Inject
 class GetExifRepositoryImpl @Inject constructor(
     private val diskDataSource: ExifDataSource
 ): GetExifRepository {
-    override fun getExif(): Single<Map<String, String>> {
-        return diskDataSource.getExif()
-    }
+
+    override fun getExif(): Single<Map<String, String>> = diskDataSource.getExif()
 }

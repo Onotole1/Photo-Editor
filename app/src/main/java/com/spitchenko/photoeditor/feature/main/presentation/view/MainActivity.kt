@@ -34,18 +34,14 @@ class MainActivity : DaggerAppCompatActivity(),
         FileProvider.getUriForFile(this, packageName, createPhotoFile())
     }
 
-    override fun showImagePickerDialog() {
-        showAlert(PICKER_IMAGE_DIALOG) {
-            negativeButton = android.R.string.cancel
-            singleChoiceItemsRes = R.array.picker_dialog
-        }
+    override fun showImagePickerDialog() = showAlert(PICKER_IMAGE_DIALOG) {
+        negativeButton = android.R.string.cancel
+        singleChoiceItemsRes = R.array.picker_dialog
     }
 
-    override fun showExifInfo(exif: String) {
-        showAlert(EXIF_DIALOG) {
-            positiveButton = android.R.string.ok
-            message = exif
-        }
+    override fun showExifInfo(exif: String) = showAlert(EXIF_DIALOG) {
+        positiveButton = android.R.string.ok
+        message = exif
     }
 
     override fun showError(throwable: Throwable) = toast(throwable.toUserFriendlyError(this))
@@ -58,7 +54,10 @@ class MainActivity : DaggerAppCompatActivity(),
                     if (isPermissionGranted(Manifest.permission.CAMERA)) {
                         startCamera()
                     } else {
-                        requestPermissions(CAMERA_PERMISSION_REQUEST_CODE, Manifest.permission.CAMERA)
+                        requestPermissions(
+                            CAMERA_PERMISSION_REQUEST_CODE,
+                            Manifest.permission.CAMERA
+                        )
                     }
                 }
 
@@ -89,17 +88,16 @@ class MainActivity : DaggerAppCompatActivity(),
         }
     }
 
-    override fun onTextSelected(text: String) {
-        if (URLUtil.isValidUrl(text)) {
-            viewModel.downloadImageByUrl(text)
-        } else {
-            toast(R.string.download_image_dialog_incorrect_url)
-        }
+    override fun onTextSelected(text: String) = if (URLUtil.isValidUrl(text)) {
+        viewModel.downloadImageByUrl(text)
+    } else {
+        toast(R.string.download_image_dialog_incorrect_url)
     }
 
     private fun startCamera() = startPicker(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
 
-    private fun startGallery() = startPicker(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
+    private fun startGallery() =
+        startPicker(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
 
     private fun startPicker(intent: Intent) {
 
@@ -119,7 +117,11 @@ class MainActivity : DaggerAppCompatActivity(),
         DEFAULT_FILE_NAME
     )
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         val permissionsResults = permissions.mapIndexed { index, permission ->
@@ -164,12 +166,10 @@ class MainActivity : DaggerAppCompatActivity(),
         permission: String,
         @StringRes explanation: Int,
         onSuccess: () -> Unit
-    ) {
-        if (permissionsResults[permission] == PackageManager.PERMISSION_GRANTED) {
-            onSuccess()
-        } else {
-            toast(explanation)
-        }
+    ) = if (permissionsResults[permission] == PackageManager.PERMISSION_GRANTED) {
+        onSuccess()
+    } else {
+        toast(explanation)
     }
 
     private enum class PickerButtons {
@@ -184,9 +184,11 @@ class MainActivity : DaggerAppCompatActivity(),
     }
 
     private companion object {
-        const val PICKER_IMAGE_DIALOG = "com.example.photoeditor.feature.main.presentation.view.PICKER_IMAGE_DIALOG"
+        const val PICKER_IMAGE_DIALOG =
+            "com.example.photoeditor.feature.main.presentation.view.PICKER_IMAGE_DIALOG"
 
-        const val DOWNLOAD_IMAGE_DIALOG = "com.example.photoeditor.feature.main.presentation.view.DOWNLOAD_IMAGE_DIALOG"
+        const val DOWNLOAD_IMAGE_DIALOG =
+            "com.example.photoeditor.feature.main.presentation.view.DOWNLOAD_IMAGE_DIALOG"
 
         const val EXIF_DIALOG = "com.example.photoeditor.feature.main.presentation.view.EXIF_DIALOG"
 

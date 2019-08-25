@@ -1,19 +1,19 @@
 package com.spitchenko.photoeditor.feature.main.presentation.dagger
 
-import android.graphics.Bitmap
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ViewDataBinding
-import com.spitchenko.domain.model.State
-import com.spitchenko.domain.usecase.UseCase
-import com.spitchenko.domain.usecase.UseCaseCompletable
-import com.spitchenko.domain.usecase.UseCaseSingle
 import com.spitchenko.photoeditor.R
 import com.spitchenko.photoeditor.databinding.ActivityMainBinding
-import com.spitchenko.photoeditor.feature.main.domain.entity.BitmapWithId
-import com.spitchenko.photoeditor.feature.main.domain.entity.SetImageRequest
-import com.spitchenko.photoeditor.feature.main.domain.entity.UriWithId
+import com.spitchenko.photoeditor.feature.main.domain.usecase.getbitmapfromuri.GetBitmapFromUri
+import com.spitchenko.photoeditor.feature.main.domain.usecase.getexif.GetExif
+import com.spitchenko.photoeditor.feature.main.domain.usecase.getresults.GetResults
+import com.spitchenko.photoeditor.feature.main.domain.usecase.removeresult.RemoveResult
+import com.spitchenko.photoeditor.feature.main.domain.usecase.setcontrollerimage.SetControllerImage
+import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.invertbitmap.InvertBitmap
+import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.mirrorbitmap.MirrorBitmap
+import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.rotatebitmap.RotateBitmap
 import com.spitchenko.photoeditor.feature.main.presentation.view.MainActivity
 import com.spitchenko.photoeditor.feature.main.presentation.view.adapter.TableDecoration
 import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.MainViewModel
@@ -24,7 +24,6 @@ import com.spitchenko.presentation.view.binding.adapter.BindingViewHolder
 import com.spitchenko.presentation.viewmodel.EventsDispatcher
 import dagger.Module
 import dagger.Provides
-import javax.inject.Named
 
 @Module
 class MainActivityModule {
@@ -32,17 +31,14 @@ class MainActivityModule {
     @Provides
     fun provideViewModel(
         context: MainActivity,
-        getBitmapFromUri: UseCase<State<Bitmap>, UriWithId>,
-        @Named("rotate_bitmap")
-        rotateBitmap: UseCase<State<Bitmap>, BitmapWithId>,
-        @Named("invert_bitmap")
-        invertBitmap: UseCase<State<Bitmap>, BitmapWithId>,
-        @Named("mirror_bitmap")
-        mirrorBitmap: UseCase<State<Bitmap>, BitmapWithId>,
-        removeResult: UseCaseCompletable<Long>,
-        setControllerImage: UseCaseCompletable<SetImageRequest>,
-        getExif: UseCaseSingle<Map<String, String>, Unit>,
-        getResults: UseCaseSingle<List<BitmapWithId>, Unit>
+        getBitmapFromUri: GetBitmapFromUri,
+        rotateBitmap: RotateBitmap,
+        invertBitmap: InvertBitmap,
+        mirrorBitmap: MirrorBitmap,
+        removeResult: RemoveResult,
+        setControllerImage: SetControllerImage,
+        getExif: GetExif,
+        getResults: GetResults
     ): MainViewModel {
 
         return context.getViewModel {
@@ -63,6 +59,8 @@ class MainActivityModule {
                 ObservableArrayList()
             )
         }.also {
+            it.init()
+
             createBinding(context, it)
         }
     }

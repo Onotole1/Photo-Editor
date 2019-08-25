@@ -9,7 +9,6 @@ import javax.inject.Inject
 class GetResultsRepositoryImpl @Inject constructor(
     private val diskResultsDataSource: ResultsDataSource
 ) : GetResultsRepository {
-    override fun getResults(): Single<List<BitmapWithId>> {
-        return diskResultsDataSource.getResults()
-    }
+
+    override fun getResults(): Single<List<BitmapWithId>> = diskResultsDataSource.getResults()
 }

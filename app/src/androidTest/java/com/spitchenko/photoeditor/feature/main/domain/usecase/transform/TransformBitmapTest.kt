@@ -1,124 +1,154 @@
 package com.spitchenko.photoeditor.feature.main.domain.usecase.transform
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.exifinterface.media.ExifInterface
 import androidx.test.platform.app.InstrumentationRegistry
+import com.nhaarman.mockitokotlin2.*
+import com.spitchenko.domain.model.State
+import com.spitchenko.photoeditor.BuildConfig
 import com.spitchenko.photoeditor.feature.main.domain.entity.BitmapWithId
 import com.spitchenko.photoeditor.feature.main.domain.usecase.getexif.GetExifRepository
-import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.invertbitmap.InvertBitmap
-import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.mirrorbitmap.MirrorBitmap
-import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.rotatebitmap.RotateBitmap
-import com.spitchenko.domain.model.State
-import com.spitchenko.domain.usecase.ExecutionThread
-import com.spitchenko.domain.usecase.UseCase
-import io.reactivex.Scheduler
+import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.invertbitmap.InvertBitmapImpl
+import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.mirrorbitmap.MirrorBitmapImpl
+import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.rotatebitmap.RotateBitmapImpl
+import com.spitchenko.test.RxSchedulersTestRule
+import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.observers.TestObserver
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.schedulers.TestScheduler
+import org.junit.Rule
 import org.junit.Test
-import java.util.concurrent.TimeUnit
+import org.junit.rules.TestRule
 
 class TransformBitmapTest {
 
-    private val testExecutionThread = object : ExecutionThread {
-        override val scheduler: Scheduler = Schedulers.trampoline()
-    }
-
-    private val testScheduler = TestScheduler()
-
-    private val testTimerExecutionThread = object : ExecutionThread {
-        override val scheduler: Scheduler = testScheduler
-    }
+    @get:Rule
+    var rxSchedulersTestRule: TestRule = RxSchedulersTestRule()
 
     private val randomGenerator = object : RandomGenerator<Long> {
         override fun generate(): Long = DELAY
     }
 
-    private val transformRepository = object : TransformReceiver {
-        override fun saveBitmapToFile(params: BitmapWithId, exif: Map<String, String>) {
-            // do nothing
-        }
-    }
+    private val transformReceiver: TransformReceiver = mock()
+    private val exifRepository: GetExifRepository = mock()
+    private val randomSource: RandomSource = mock()
 
-    private val exifRepository = object : GetExifRepository {
-        override fun getExif(): Single<Map<String, String>> {
-            return Single.just(emptyMap())
-        }
-    }
-
-    @Test
-    fun bitmap_rotation_test() {
-        val rotateBitmap = RotateBitmap(
-            testTimerExecutionThread,
-            testExecutionThread,
-            testExecutionThread,
+    private val delegate =
+        TransformBitmapDelayedDelegate(
             randomGenerator,
-            transformRepository,
+            randomSource,
+            transformReceiver,
             exifRepository
         )
 
-        bitmap_transform_test("original.png", "rotate.png", rotateBitmap)
+    @Test
+    fun bitmap_rotation_test() {
+        whenever(exifRepository.getExif()).thenReturn(Single.just(emptyMap()))
+        whenever(randomSource(DELAY)).thenReturn(Observable.fromIterable(0..DELAY.dec()))
+
+        val rotateBitmap = RotateBitmapImpl(
+            delegate
+        )
+
+        val context = InstrumentationRegistry.getInstrumentation().context
+
+        val original = context.assets.open("original.png").use {
+            BitmapFactory.decodeStream(it)
+        }
+
+        val expected = context.assets.open("rotate.png").use {
+            BitmapFactory.decodeStream(it)
+        }
+
+        val expectedExif = mapOf(
+            ExifInterface.TAG_IMAGE_LENGTH to expected.height.toString(),
+            ExifInterface.TAG_IMAGE_WIDTH to expected.width.toString(),
+            ExifInterface.TAG_MODEL to BuildConfig.APPLICATION_ID
+        )
+
+        rotateBitmap(BitmapWithId(TEST_IMAGE_ID, original))
+            .test()
+            .assertValue {
+                it is State.Data && it.data.sameAs(expected)
+            }
+
+        verify(exifRepository).getExif()
+        verify(transformReceiver).saveBitmapToFile(any(), eq(expectedExif))
+        verify(randomSource).invoke(DELAY)
     }
 
     @Test
     fun bitmap_mirror_test() {
-        val mirrorBitmap = MirrorBitmap(
-            testTimerExecutionThread,
-            testExecutionThread,
-            testExecutionThread,
-            randomGenerator,
-            transformRepository,
-            exifRepository
+        whenever(exifRepository.getExif()).thenReturn(Single.just(emptyMap()))
+        whenever(randomSource(DELAY)).thenReturn(Observable.fromIterable(0..DELAY.dec()))
+
+        val mirrorBitmap = MirrorBitmapImpl(
+            delegate
         )
 
-        bitmap_transform_test("original.png", "mirror.png", mirrorBitmap)
+        val context = InstrumentationRegistry.getInstrumentation().context
+
+        val original = context.assets.open("original.png").use {
+            BitmapFactory.decodeStream(it)
+        }
+
+        val expected = context.assets.open("mirror.png").use {
+            BitmapFactory.decodeStream(it)
+        }
+
+        val expectedExif = mapOf(
+            ExifInterface.TAG_IMAGE_LENGTH to expected.height.toString(),
+            ExifInterface.TAG_IMAGE_WIDTH to expected.width.toString(),
+            ExifInterface.TAG_MODEL to BuildConfig.APPLICATION_ID
+        )
+
+        mirrorBitmap(BitmapWithId(TEST_IMAGE_ID, original))
+            .test()
+            .assertValue {
+                it is State.Data && it.data.sameAs(expected)
+            }
+
+        verify(exifRepository).getExif()
+        verify(transformReceiver).saveBitmapToFile(any(), eq(expectedExif))
+        verify(randomSource).invoke(DELAY)
     }
 
     @Test
     fun bitmap_invert_test() {
-        val mirrorBitmap = InvertBitmap(
-            testTimerExecutionThread,
-            testExecutionThread,
-            testExecutionThread,
-            randomGenerator,
-            transformRepository,
-            exifRepository
+        whenever(exifRepository.getExif()).thenReturn(Single.just(emptyMap()))
+        whenever(randomSource(DELAY)).thenReturn(Observable.fromIterable(0..DELAY.dec()))
+
+        val mirrorBitmap = InvertBitmapImpl(
+            delegate
         )
 
-        bitmap_transform_test("original.png", "invert.png", mirrorBitmap)
-    }
-
-    private fun bitmap_transform_test(
-        originalFileName: String, expectedFileName: String,
-        useCase: UseCase<State<Bitmap>, BitmapWithId>
-    ) {
         val context = InstrumentationRegistry.getInstrumentation().context
 
-        val original = context.assets.open(originalFileName).use {
+        val original = context.assets.open("original.png").use {
             BitmapFactory.decodeStream(it)
         }
 
-        val expected = context.assets.open(expectedFileName).use {
+        val expected = context.assets.open("invert.png").use {
             BitmapFactory.decodeStream(it)
         }
 
-        val observer = TestObserver<State<Bitmap>>()
+        val expectedExif = mapOf(
+            ExifInterface.TAG_IMAGE_LENGTH to expected.height.toString(),
+            ExifInterface.TAG_IMAGE_WIDTH to expected.width.toString(),
+            ExifInterface.TAG_MODEL to BuildConfig.APPLICATION_ID
+        )
 
-        useCase.execute(observer, BitmapWithId(0, original))
+        mirrorBitmap(BitmapWithId(TEST_IMAGE_ID, original))
+            .test()
+            .assertValue {
+                it is State.Data && it.data.sameAs(expected)
+            }
 
-        testScheduler.advanceTimeBy(DELAY, TimeUnit.SECONDS)
-
-        observer.assertSubscribed()
-
-        observer.awaitTerminalEvent(DELAY, TimeUnit.SECONDS)
-
-        observer.assertValue {
-            it is State.Data && it.data.sameAs(expected)
-        }
+        verify(exifRepository).getExif()
+        verify(transformReceiver).saveBitmapToFile(any(), eq(expectedExif))
+        verify(randomSource).invoke(DELAY)
     }
 
     private companion object {
-        const val DELAY = 1L
+        const val DELAY = 1000L
+        const val TEST_IMAGE_ID = 0L
     }
 }

@@ -9,7 +9,7 @@ import javax.inject.Inject
 class SetControllerImageRepositoryImpl @Inject constructor(
     private val diskSetControllerImageSource: SetControllerImageSource
 ): SetControllerImageRepository {
-    override fun setControllerImage(request: SetImageRequest): Completable {
-        return diskSetControllerImageSource.setControllerImage(request)
-    }
+
+    override fun setControllerImage(request: SetImageRequest): Completable =
+        diskSetControllerImageSource.setControllerImage(request)
 }

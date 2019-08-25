@@ -1,16 +1,13 @@
 package com.spitchenko.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.spitchenko.domain.usecase.BaseUseCase
+import io.reactivex.disposables.CompositeDisposable
 
-abstract class BaseViewModel(private val useCases: Iterable<BaseUseCase>) : ViewModel() {
-    constructor(vararg useCases: BaseUseCase) : this(useCases.asIterable())
+abstract class BaseViewModel : ViewModel() {
+
+    protected val disposables = CompositeDisposable()
 
     override fun onCleared() {
-        super.onCleared()
-
-        useCases.forEach {
-            it.dispose()
-        }
+        disposables.dispose()
     }
 }

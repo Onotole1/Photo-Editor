@@ -2,36 +2,33 @@ package com.spitchenko.photoeditor.feature.main.domain.usecase.transform
 
 import android.graphics.Bitmap
 import androidx.exifinterface.media.ExifInterface
+import com.spitchenko.domain.model.State
 import com.spitchenko.photoeditor.BuildConfig
 import com.spitchenko.photoeditor.feature.main.domain.entity.BitmapWithId
 import com.spitchenko.photoeditor.feature.main.domain.usecase.getexif.GetExifRepository
-import com.spitchenko.domain.model.State
-import com.spitchenko.domain.usecase.ExecutionThread
-import com.spitchenko.domain.usecase.UseCase
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
-import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-abstract class TransformBitmapDelayed(
+class TransformBitmapDelayedDelegate @Inject constructor(
     private val randomGenerator: RandomGenerator<Long>,
+    private val randomSource: RandomSource,
     private val receiver: TransformReceiver,
-    private val repository: GetExifRepository,
-    private val timerThreadExecutor: ExecutionThread,
-    workerThreadExecutor: ExecutionThread,
-    postThreadExecutor: ExecutionThread
-) : UseCase<State<Bitmap>, BitmapWithId>(workerThreadExecutor, postThreadExecutor) {
+    private val repository: GetExifRepository
+) {
 
-    protected abstract fun bitmapSource(params: Bitmap): Observable<Bitmap>
-
-    override fun buildUseCaseObservable(params: BitmapWithId): Observable<State<Bitmap>> {
+    fun buildUseCaseObservable(
+        params: BitmapWithId,
+        bitmapSource: Observable<Bitmap>
+    ): Observable<State<Bitmap>> {
         val random = randomGenerator.generate()
         val max = random.dec()
 
-        val interval = Observable.interval(1, TimeUnit.SECONDS, timerThreadExecutor.scheduler).take(random)
+        val interval = randomSource(random)
 
         return Observable.combineLatest(
             interval,
-            bitmapSource(params.source).flatMap { bitmap ->
+            bitmapSource.flatMap { bitmap ->
                 repository.getExif().map { exif ->
                     receiver.saveBitmapToFile(params.copy(source = bitmap), exif.toMutableMap().apply {
                         set(ExifInterface.TAG_IMAGE_LENGTH, bitmap.height.toString())

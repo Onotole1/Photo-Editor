@@ -3,81 +3,46 @@ package com.spitchenko.photoeditor.feature.main.presentation.viewmodel
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.databinding.ObservableArrayList
-import com.spitchenko.photoeditor.feature.main.domain.entity.BitmapWithId
+import com.google.common.truth.Truth.assertThat
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
+import com.spitchenko.domain.model.State
 import com.spitchenko.photoeditor.feature.main.domain.entity.SetImageRequest
 import com.spitchenko.photoeditor.feature.main.domain.entity.UriWithId
+import com.spitchenko.photoeditor.feature.main.domain.usecase.getbitmapfromuri.GetBitmapFromUri
+import com.spitchenko.photoeditor.feature.main.domain.usecase.getexif.GetExif
+import com.spitchenko.photoeditor.feature.main.domain.usecase.getresults.GetResults
+import com.spitchenko.photoeditor.feature.main.domain.usecase.removeresult.RemoveResult
+import com.spitchenko.photoeditor.feature.main.domain.usecase.setcontrollerimage.SetControllerImage
+import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.invertbitmap.InvertBitmap
+import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.mirrorbitmap.MirrorBitmap
+import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.rotatebitmap.RotateBitmap
 import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.bindings.ItemControllerBinding
 import com.spitchenko.photoeditor.feature.main.presentation.viewmodel.bindings.ItemResultBinding
-import com.spitchenko.domain.model.State
-import com.spitchenko.domain.usecase.ExecutionThread
-import com.spitchenko.domain.usecase.UseCase
-import com.spitchenko.domain.usecase.UseCaseCompletable
-import com.spitchenko.domain.usecase.UseCaseSingle
 import com.spitchenko.presentation.viewmodel.EventsDispatcher
-import com.spitchenko.presentation.viewmodel.binding.BindingClass
+import com.spitchenko.test.RxSchedulersTestRule
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
-import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
 
 class MainViewModelInstrumentedTest {
 
-    private val testExecutionThread = object : ExecutionThread {
-        override val scheduler: Scheduler = Schedulers.trampoline()
-    }
+    @get:Rule
+    var rxSchedulersTestRule: TestRule = RxSchedulersTestRule()
 
-    private val getBitmapFromUri = object : UseCase<State<Bitmap>, UriWithId>(
-        testExecutionThread,
-        testExecutionThread
-    ) {
-        override fun buildUseCaseObservable(params: UriWithId): Observable<State<Bitmap>> =
-            Observable.empty()
-    }
-
-    private val transformUseCase = object : UseCase<State<Bitmap>, BitmapWithId>(
-        testExecutionThread,
-        testExecutionThread
-    ) {
-        override fun buildUseCaseObservable(params: BitmapWithId): Observable<State<Bitmap>> {
-            return Observable.empty()
-        }
-
-    }
-
-    private val removeResult = object : UseCaseCompletable<Long>(
-        testExecutionThread, testExecutionThread
-    ) {
-        override fun buildUseCaseObservable(params: Long): Completable {
-            return Completable.complete()
-        }
-    }
-
-    private val setControllerImage = object : UseCaseCompletable<SetImageRequest>(
-        testExecutionThread, testExecutionThread
-    ) {
-        override fun buildUseCaseObservable(params: SetImageRequest): Completable {
-            return Completable.complete()
-        }
-    }
-
-    private val getExif = object : UseCaseSingle<Map<String, String>, Unit>(
-        testExecutionThread, testExecutionThread
-    ) {
-        override fun buildUseCaseObservable(params: Unit): Single<Map<String, String>> {
-            return Single.fromObservable(Observable.empty())
-        }
-    }
-
-    private val getResults = object : UseCaseSingle<List<BitmapWithId>, Unit>(
-        testExecutionThread, testExecutionThread
-    ) {
-        override fun buildUseCaseObservable(params: Unit): Single<List<BitmapWithId>> {
-            return Single.fromObservable(Observable.empty())
-        }
-    }
+    private val getBitmapFromUri: GetBitmapFromUri = mock()
+    private val rotateBitmap: RotateBitmap = mock()
+    private val mirrorBitmap: MirrorBitmap = mock()
+    private val invertBitmap: InvertBitmap = mock()
+    private val removeResult: RemoveResult = mock()
+    private val setControllerImage: SetControllerImage = mock()
+    private val getExif: GetExif = mock()
+    private val getResults: GetResults = mock()
 
     private val testBitmap = Bitmap.createBitmap(100, 50, Bitmap.Config.ARGB_8888)
 
@@ -86,20 +51,15 @@ class MainViewModelInstrumentedTest {
     @Test
     fun transform_use_case_test() {
 
-        val transformUseCase = object : UseCase<State<Bitmap>, BitmapWithId>(
-            testExecutionThread,
-            testExecutionThread
-        ) {
-            override fun buildUseCaseObservable(params: BitmapWithId): Observable<State<Bitmap>> =
-                Observable.just(State.Data(testBitmap))
-        }
+        whenever(rotateBitmap(any())).thenReturn(Observable.just(State.Data(testBitmap)))
+        whenever(getResults()).thenReturn(Single.just(emptyList()))
 
         val viewModel = MainViewModel(
             MainViewModelUseCases(
                 getBitmapFromUri,
-                transformUseCase,
-                transformUseCase,
-                transformUseCase,
+                rotateBitmap,
+                mirrorBitmap,
+                invertBitmap,
                 removeResult,
                 setControllerImage,
                 getExif,
@@ -108,27 +68,29 @@ class MainViewModelInstrumentedTest {
 
             testDispatcher,
 
-            ObservableArrayList<BindingClass>()
+            ObservableArrayList()
         )
 
         val inputBitmap = Bitmap.createBitmap(50, 100, Bitmap.Config.ARGB_8888)
 
+        viewModel.init()
         viewModel.onRotateClick(inputBitmap)
 
-        assertTrue((viewModel.bindingList[1] as ItemResultBinding).image?.sameAs(testBitmap) == true)
+        assertThat((viewModel.bindingList[1] as ItemResultBinding).image?.sameAs(testBitmap)).isTrue()
+
+        verify(rotateBitmap).invoke(any())
+        verify(getResults).invoke()
     }
 
     @Test
     fun get_image_from_uri_use_case_test() {
+        whenever(getResults()).thenReturn(Single.just(emptyList()))
 
         val testUri = Uri.EMPTY
 
-        val getBitmapFromUri = object : UseCase<State<Bitmap>, UriWithId>(
-            testExecutionThread,
-            testExecutionThread
-        ) {
-            override fun buildUseCaseObservable(params: UriWithId): Observable<State<Bitmap>> {
-                assertTrue(params.uri == testUri)
+        val getBitmapFromUri = object : GetBitmapFromUri {
+            override fun invoke(params: UriWithId): Observable<State<Bitmap>> {
+                assertThat(params.uri).isEqualTo(testUri)
                 return Observable.just(State.Data(testBitmap))
             }
         }
@@ -136,9 +98,9 @@ class MainViewModelInstrumentedTest {
         val viewModel = MainViewModel(
             MainViewModelUseCases(
                 getBitmapFromUri,
-                transformUseCase,
-                transformUseCase,
-                transformUseCase,
+                rotateBitmap,
+                mirrorBitmap,
+                invertBitmap,
                 removeResult,
                 setControllerImage,
                 getExif,
@@ -147,27 +109,42 @@ class MainViewModelInstrumentedTest {
 
             testDispatcher,
 
-            ObservableArrayList<BindingClass>()
+            ObservableArrayList()
         )
+
+        viewModel.init()
 
         viewModel.setImage(testUri)
 
-        assertTrue((viewModel.bindingList[0] as ItemControllerBinding).image?.sameAs(testBitmap) == true)
+        assertThat((viewModel.bindingList[0] as ItemControllerBinding).image?.sameAs(testBitmap)).isTrue()
 
         viewModel.downloadImageByUrl(testUri.toString())
 
-        assertTrue((viewModel.bindingList[0] as ItemControllerBinding).image?.sameAs(testBitmap) == true)
+        assertThat((viewModel.bindingList[0] as ItemControllerBinding).image?.sameAs(testBitmap)).isTrue()
+
+        verify(getResults).invoke()
     }
 
     @Test
     fun replace_existing_image_use_case_test() {
+        val testResultId = 1L
+
+        whenever(getResults()).thenReturn(Single.just(emptyList()))
+        whenever(
+            setControllerImage(
+                SetImageRequest(
+                    testResultId,
+                    0
+                )
+            )
+        ).thenReturn(Completable.complete())
 
         val viewModel = MainViewModel(
             MainViewModelUseCases(
                 getBitmapFromUri,
-                transformUseCase,
-                transformUseCase,
-                transformUseCase,
+                rotateBitmap,
+                mirrorBitmap,
+                invertBitmap,
                 removeResult,
                 setControllerImage,
                 getExif,
@@ -176,10 +153,10 @@ class MainViewModelInstrumentedTest {
 
             testDispatcher,
 
-            ObservableArrayList<BindingClass>()
+            ObservableArrayList()
         )
 
-        val testResultId = 1L
+        viewModel.init()
 
         viewModel.bindingList.add(ItemResultBinding(testResultId, testBitmap))
 
@@ -187,6 +164,7 @@ class MainViewModelInstrumentedTest {
 
         viewModel.replaceExistingImage()
 
-        assertTrue((viewModel.bindingList[0] as ItemControllerBinding).image?.sameAs(testBitmap) == true)
+        verify(getResults).invoke()
+        verify(setControllerImage).invoke(SetImageRequest(testResultId, 0))
     }
 }

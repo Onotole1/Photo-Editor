@@ -1,31 +1,21 @@
 package com.spitchenko.photoeditor.feature.main.presentation.viewmodel
 
-import android.graphics.Bitmap
-import com.spitchenko.domain.model.State
-import com.spitchenko.domain.usecase.BaseUseCase
-import com.spitchenko.domain.usecase.UseCase
-import com.spitchenko.domain.usecase.UseCaseCompletable
-import com.spitchenko.domain.usecase.UseCaseSingle
-import com.spitchenko.photoeditor.feature.main.domain.entity.BitmapWithId
-import com.spitchenko.photoeditor.feature.main.domain.entity.SetImageRequest
-import com.spitchenko.photoeditor.feature.main.domain.entity.UriWithId
+import com.spitchenko.photoeditor.feature.main.domain.usecase.getbitmapfromuri.GetBitmapFromUri
+import com.spitchenko.photoeditor.feature.main.domain.usecase.getexif.GetExif
+import com.spitchenko.photoeditor.feature.main.domain.usecase.getresults.GetResults
+import com.spitchenko.photoeditor.feature.main.domain.usecase.removeresult.RemoveResult
+import com.spitchenko.photoeditor.feature.main.domain.usecase.setcontrollerimage.SetControllerImage
+import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.invertbitmap.InvertBitmap
+import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.mirrorbitmap.MirrorBitmap
+import com.spitchenko.photoeditor.feature.main.domain.usecase.transform.rotatebitmap.RotateBitmap
 
 class MainViewModelUseCases(
-    val getBitmapFromUri: UseCase<State<Bitmap>, UriWithId>,
-    val rotateBitmap: UseCase<State<Bitmap>, BitmapWithId>,
-    val mirrorBitmap: UseCase<State<Bitmap>, BitmapWithId>,
-    val invertBitmap: UseCase<State<Bitmap>, BitmapWithId>,
-    val removeResult: UseCaseCompletable<Long>,
-    val setControllerImage: UseCaseCompletable<SetImageRequest>,
-    val getExif: UseCaseSingle<Map<String, String>, Unit>,
-    val getResults: UseCaseSingle<List<BitmapWithId>, Unit>
-) : List<BaseUseCase> by listOf(
-    getBitmapFromUri,
-    rotateBitmap,
-    mirrorBitmap,
-    invertBitmap,
-    removeResult,
-    setControllerImage,
-    getExif,
-    getResults
+    val getBitmapFromUri: GetBitmapFromUri,
+    val rotateBitmap: RotateBitmap,
+    val mirrorBitmap: MirrorBitmap,
+    val invertBitmap: InvertBitmap,
+    val removeResult: RemoveResult,
+    val setControllerImage: SetControllerImage,
+    val getExif: GetExif,
+    val getResults: GetResults
 )

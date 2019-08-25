@@ -3,4 +3,8 @@ ext {
             'domain',
             'presentation'
     ]
+
+    test_dependencies = [
+            'test'
+    ]
 }
